@@ -1,0 +1,256 @@
+<div class="section section--full-width section--padded">
+  <div class="section-container container">
+    <div class="left-column">
+      <h2 class="heading">{{ section.settings.main_heading }}</h2>
+      <h3 class="heading_two">{{ section.settings.second_heading }}</h3>
+
+      <div class="description top">
+        {{ section.settings.description }}
+      </div>
+
+      <div class="shop_media_icon_flex">
+        <div class="icon_text rte icon_flex">
+          {%- if section.settings.custom_icon1 != blank -%}
+            <img
+              src="{{ section.settings.custom_icon1 | img_url:'master' }}"
+              class="custom_icon"
+            >
+          {%- endif -%}
+
+          {%- if section.settings.icon_text1 != blank -%}
+            <p class="custom_icon__text">
+              {{ section.settings.icon_text1 }}
+            </p>
+          {%- endif -%}
+        </div>
+
+        <div class="icon_text rte icon_flex">
+          {%- if section.settings.custom_icon2 != blank -%}
+            <img
+              src="{{ section.settings.custom_icon2 | img_url:'master' }}"
+              class="custom_icon"
+            >
+          {%- endif -%}
+
+          {%- if section.settings.icon_text2 != blank -%}
+            <p class="custom_icon__text">
+              {{ section.settings.icon_text2 }}
+            </p>
+          {%- endif -%}
+        </div>
+        <div class="icon_text rte icon_flex">
+          {%- if section.settings.custom_icon3 != blank -%}
+            <img
+              src="{{ section.settings.custom_icon3| img_url:'master' }}"
+              class="custom_icon"
+            >
+          {%- endif -%}
+
+          {%- if section.settings.icon_text3 != blank -%}
+            <p class="custom_icon__text">
+              {{ section.settings.icon_text3 }}
+            </p>
+          {%- endif -%}
+        </div>
+        <div class="icon_text rte icon_flex">
+          {%- if section.settings.custom_icon4 != blank -%}
+            <img
+              src="{{ section.settings.custom_icon4 | img_url:'master' }}"
+              class="custom_icon"
+            >
+          {%- endif -%}
+
+          {%- if section.settings.icon_text4 != blank -%}
+            <p class="custom_icon__text">
+              {{ section.settings.icon_text4 }}
+            </p>
+          {%- endif -%}
+        </div>
+        <div class="icon_text rte icon_flex">
+          {%- if section.settings.custom_icon5 != blank -%}
+            <img
+              src="{{ section.settings.custom_icon5 | img_url:'master' }}"
+              class="custom_icon"
+            >
+          {%- endif -%}
+
+          {%- if section.settings.icon_text5 != blank -%}
+            <p class="custom_icon__text">
+              {{ section.settings.icon_text5 }}
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="description bottom">{{ section.settings.description2 }}</div>
+
+      {%- if block.settings.button_1_label != blank -%}
+        <div class="section__block section__block--button">
+          <a class="btn btn--primary" href="{{ section.settings.button_1_link }}">
+            {{- section.settings.button_1_label | escape -}}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+    <div class="right-column">
+      <div class="Grid_col_1">
+        {% if section.settings.grid_img1 != blank %}
+          <img class="image_grid" src="{{ section.settings.grid_img1 | img_url: 'master' }}" alt="Image 1">
+        {% endif %}
+      </div>
+
+      <div class="Grid_col_2">
+        {% if section.settings.grid_img2 != blank %}
+          <img class="image_grid" src="{{ section.settings.grid_img2 | img_url: 'master' }}" alt="Image 2">
+        {% endif %}
+      </div>
+
+      <div class="Grid_col_3">
+        {% if section.settings.grid_img3 != blank %}
+          <img class="image_grid" src="{{ section.settings.grid_img3 | img_url: 'master' }}" alt="Image 3">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Text with Img Grid",
+  "class":"text_media_with_grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "MEdia Grid Images"
+    },
+        {
+          "type": "image_picker",
+          "id": "grid_img1",
+          "label": "Media Grid Image 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "grid_img2",
+          "label": "Media Grid Image 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "grid_img3",
+          "label": "Media Grid Image 3"
+        },
+    {
+      "type": "header",
+      "content": "Headings & Text"
+    },
+     {
+          "type": "text",
+          "id": "main_heading",
+          "label": "Main Heading"
+        },
+      {
+          "type": "text",
+          "id": "second_heading",
+          "label": "Second Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Text",
+          "default": "<p>Pair text with an image to focus on a product, collection or blog post. Add details on availability, style, or even provide a review.</p>"
+        },
+       {
+          "type": "richtext",
+          "id": "description2",
+          "label": "Text Bottom",
+          "default": "<p>Pair text with an image to focus on a product, collection or blog post. Add details on availability, style, or even provide a review.</p>"
+        },
+    {
+      "type": "header",
+      "content": "Icon with text"
+    },
+    {
+          "type": "image_picker",
+          "id": "custom_icon1",
+          "label": "icon Image 1"
+        },
+        {
+          "type": "text",
+          "id": "icon_text1",
+          "label": "icon Text 1",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon2",
+          "label": "icon Image 2"
+        },
+        {
+          "type": "text",
+          "id": "icon_text2",
+          "label": "icon Text 2",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon3",
+          "label": "icon Image 3"
+        },
+        {
+          "type": "text",
+          "id": "icon_text3",
+          "label": "icon Text 3",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon4",
+          "label": "icon Image 4"
+        },
+        {
+          "type": "text",
+          "id": "icon_text4",
+          "label": "icon Text 4",
+          "default": "Shop By Manufacturer"
+        },
+             {
+          "type": "image_picker",
+          "id": "custom_icon5",
+          "label": "icon Image 5"
+        },
+        {
+          "type": "text",
+          "id": "icon_text5",
+          "label": "icon Text 5",
+          "default": "Shop By Manufacturer"
+        },
+      {
+      "type": "header",
+      "content": "Button"
+    },
+
+       {
+          "type": "text",
+          "id": "button_1_label",
+          "label": "Button 1 label",
+          "default": "Optional button"
+        },
+        {
+          "type": "url",
+          "id": "button_1_link",
+          "label": "Button 1 link"
+        }
+  ],
+
+"presets": [
+  {
+    "name": "Text with Img Grid"
+  }
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

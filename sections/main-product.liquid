@@ -1,0 +1,5303 @@
+{%- comment -%}theme-check-disable LiquidTag, NestedSnippet, TemplateLength{%- endcomment -%}
+{%- comment -%}Build: bg-info-bg text-info-text{%- endcomment -%}
+{{ 'product.css' | asset_url | stylesheet_tag }}
+{{ 'product-page.css' | asset_url | stylesheet_tag }}
+
+{%- assign messages = section.blocks | where: 'type', 'message' -%}
+{%- if messages -%}
+  <script src="{{ 'product-message.js' | asset_url }}" defer="defer"></script>
+  {{ 'product-message.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- if product.metafields.spr.reviews -%}
+  {{ 'reviews.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- if product.media.size > 0 -%}
+  <link rel="stylesheet" href="{{ 'media-gallery.css' | asset_url }}">
+{%- endif -%}
+
+{%- if product.metafields.reviews.rating.value != blank -%}
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('shopify-product-reviews')) {
+        const link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.href = "{{ 'reviews.css' | asset_url }}";
+        document.body.appendChild(link);
+      }
+    }, { once: true });
+  </script>
+{%- endif -%}
+
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  # constants
+  assign breakpoint_md = 769
+  assign breakpoint_lg = 1024
+
+  assign product_form_id = 'product-form-' | append: section.id
+  assign current_variant = product.selected_or_first_available_variant
+  assign first_3d_model = product.media | where: 'media_type', 'model' | first
+  assign media_ratio = section.settings.media_ratio
+  assign thumb_ratio = section.settings.thumb_ratio
+
+  if media_ratio == 'natural'
+    assign media_ratio = 99
+    for media in product.media
+      if media.preview_image.aspect_ratio < media_ratio
+        assign media_ratio = media.preview_image.aspect_ratio
+      endif
+    endfor
+  endif
+
+  if thumb_ratio == 'natural'
+    assign thumb_ratio = 99
+    for media in product.media
+      if media.preview_image.aspect_ratio < thumb_ratio
+        assign thumb_ratio = media.preview_image.aspect_ratio
+      endif
+    endfor
+  endif
+-%}
+
+{%- style -%}
+  {%- if section.settings.media_layout == 'stacked' -%}
+    @media (max-width:  {{ breakpoint_md | minus: 0.02 }}px) {
+      .media-gallery__main .media-xr-button { display: none; }
+      .active .media-xr-button:not([data-shopify-xr-hidden]) { display: block; }
+    }
+  {%- else -%}
+    .media-gallery__main .media-xr-button { display: none; }
+    .active .media-xr-button:not([data-shopify-xr-hidden]) { display: block; }
+  {%- endif -%}
+
+  {%- if section.settings.media_size == 'large' -%}
+    @media (min-width: {{ breakpoint_lg }}px) {
+      :root { --product-info-width: 400px !important; }
+    }
+  {%- endif -%}
+{%- endstyle -%}
+
+{%- if first_3d_model -%}
+  <link
+    rel="stylesheet"
+    href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css"
+    media="print"
+    onload="this.media='all'"
+  >
+  <link rel="stylesheet" href="{{ 'model-viewer.css' | asset_url }}" media="print" onload="this.media='all'">
+  <script src="{{ 'product-model.js' | asset_url }}" defer></script>
+{%- endif -%}
+<div class="container">
+  <div class="product-info__block product-info__block--sm product-info__title top_title" {{ block.shopify_attributes }}>
+    <h1 class="product-title h5">{{ product.title | escape }}</h1>
+    {% if section.settings.part_number != blank %}
+      <h4 class="part-number-123456">{{ section.settings.part_number }}</h4>
+    {% endif %}
+  </div>
+</div>
+<div class="container">
+  <div class="product js-product custom_gallery_pro_info" data-section="{{ section.id }}">
+    <div id="product-media" class="product-media product-media--{{ section.settings.media_layout }}">
+      {%- if product.media.size > 0 -%}
+        {% render 'media-gallery',
+          product: product,
+          current_variant: current_variant,
+          media_ratio: media_ratio,
+          media_crop: section.settings.media_crop,
+          thumb_ratio: thumb_ratio,
+          thumb_crop: section.settings.thumb_crop,
+          first_3d_model: first_3d_model,
+          zoom: section.settings.hover_zoom
+        %}
+      {%- else -%}
+        <div class="media relative">
+          {{ 'image' | placeholder_svg_tag: 'media__placeholder' }}
+        </div>
+      {%- endif -%}
+      {% comment %}
+              <div class="shop_media_icon_flex">
+        <div class="gn-container">
+          <div class="icon_text rte icon_flex">
+            <img src="{{ section.settings.iconlist-img1 | img_url:'master' }}" class="custom_icon">
+            <div class="icon-list-content">
+            <p class="custom_icon__text">{{ section.settings.iconlist-title1 }}</p>
+            <a href="{{ section.settings.iconlist-link1 }}" class="ct-icon-list-link">{{ section.settings.iconlist-link-label1 }}</a>
+          </div>
+           </div>
+
+            <div class="icon_text rte icon_flex">
+            <img src="{{ section.settings.iconlist-img2 | img_url:'master' }}" class="custom_icon">
+            <div class="icon-list-content">
+            <p class="custom_icon__text">{{ section.settings.iconlist-title2 }}</p>
+            <a href="{{ section.settings.iconlist-link2 }}" class="ct-icon-list-link">{{ section.settings.iconlist-link-label2 }}</a>
+          </div>
+           </div>
+
+            <div class="icon_text rte icon_flex">
+            <img src="{{ section.settings.iconlist-img3 | img_url:'master' }}" class="custom_icon">
+            <div class="icon-list-content">
+            <p class="custom_icon__text">{{ section.settings.iconlist-title3 }}</p>
+            <a href="{{ section.settings.iconlist-link3 }}" class="ct-icon-list-link">{{ section.settings.iconlist-link-label3 }}</a>
+          </div>
+           </div>
+
+          </div>
+        </div>
+      {% endcomment %}
+      <div class="pro_details_tabs pro_tabs_mobile_hide">
+        {%- assign found_highlight_text = false -%}
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.settings.show_reviews and block.type == 'tabs' -%}
+              <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                  if (document.getElementById('shopify-product-reviews')) {
+                    const link = document.createElement('link');
+                    link.rel = "stylesheet";
+                    link.href = "{{ 'reviews.css' | asset_url }}";
+                    document.body.appendChild(link);
+                  }
+                }, { once: true });
+              </script>
+            {%- elsif block.type == 'highlight-text' and found_highlight_text == false -%}
+              <link
+                rel="stylesheet"
+                href="{{ 'product-highlights.css' | asset_url }}"
+                media="print"
+                onload="this.media='all'"
+              >
+              {%- assign found_highlight_text = true -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          <div class="container reading-width collabse_flex">
+            {%- for block in section.blocks -%}
+              {%- case block.type -%}
+                {%- when 'collapsible-content-v1' -%}
+                  <details-disclosure {{ block.shopify_attributes }}>
+                    <details
+                      class="spacifications disclosure disclosure--row"
+                      {% if block.settings.open %}
+                        open
+                      {% endif %}
+                    >
+                      <summary>
+                        <div class="flex justify-between items-center tab_collapse">
+                          <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0 tab_btn">
+                            {{- block.settings.heading | default: block.settings.page.title -}}
+                          </h2>
+                        </div>
+                      </summary>
+                      <div class="disclosure__panel has-motion">
+                        <div class="disclosure__content rte">
+                          <div class="detail_container">
+                            <div class="detail_inner">
+                              {% if block.settings.Item_type_head != blank %}
+                                <div class="Item_type_head">
+                                  {{ block.settings.Item_type_head }}
+                                  <div class="orange_line"></div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name1 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type1 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name1 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name2 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type2 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name2 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name3 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type3 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name3 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name4 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type4 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name4 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name5 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type5 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name5 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name6 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type6 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name6 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name7 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type7 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name7 }}</div>
+                                </div>
+                              {% endif %}
+                              <!-- custom -->
+                              {% if block.settings.Item_name8 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type8 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name8 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name9 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type9 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name9 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name10 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type10 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name10 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name11 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type11 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name11 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name12 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type12 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name12 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name13 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type13 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name13 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name14 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type14 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name14 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name15 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type15 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name15 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name16 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type16 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name16 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name17 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type17 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name17 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name18 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type18 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name18 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name19 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type19 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name19 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name20 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type20 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name20 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name21 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type21 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name21 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name22 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type22 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name22 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name23 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type23 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name23 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name24 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type24 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name24 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name25 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type25 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name25 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name26 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type26 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name26 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name27 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type27 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name27 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name28 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type28 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name28 }}</div>
+                                </div>
+                              {% endif %}
+
+                              {% if block.settings.Item_name29 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type29 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name29 }}</div>
+                                </div>
+                              {% endif %}
+
+                              {% if block.settings.Item_name30 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type30 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name30 }}</div>
+                                </div>
+                              {% endif %}
+
+                              {% if block.settings.Item_name31 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type31 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name31 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name32 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type32 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name32 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name33 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type33 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name33 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name34 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type34 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name34 }}</div>
+                                </div>
+                              {% endif %}
+
+                              {% if block.settings.Item_name35 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type35 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name35 }}</div>
+                                </div>
+                              {% endif %}
+
+                              {% if block.settings.Item_name30 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type30 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name30 }}</div>
+                                </div>
+                              {% endif %}
+
+                              <!-- end -->
+
+                              {% if block.settings.Item_type_head2 != blank %}
+                                <div class="Item_type_head second">
+                                  {{ block.settings.Item_type_head2 }}
+                                  <div class="orange_line"></div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name_second1 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type_second1 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name_second1 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name_second2 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type_second2 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name_second2 }}</div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_name_second3 != blank %}
+                                <div class="deatails_flex">
+                                  <div class="Item_type">{{ block.settings.Item_type_second3 }}</div>
+                                  <div class="Item_name">{{ block.settings.Item_name_second3 }}</div>
+                                </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </details>
+                  </details-disclosure>
+                {%- when 'product-description' -%}
+                  <details-disclosure {{ block.shopify_attributes }} class="product_desc_tab--{{ forloop.index }}">
+                    <details
+                      class="spacifications disclosure disclosure--row"
+                      {% if block.settings.open %}
+                        open
+                      {% endif %}
+                    >
+                      <summary>
+                        <div class="flex justify-between items-center tab_collapse">
+                          <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0 tab_btn">
+                            {{- block.settings.heading | default: block.settings.page.title -}}
+                          </h2>
+                        </div>
+                      </summary>
+                      <div class="disclosure__panel has-motion">
+                        <div class="disclosure__content rte">
+                          <div class="detail_container">
+                            <div class="detail_inner">
+                              {{ product.description }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </details>
+                  </details-disclosure>
+
+                {%- when 'collapsible-content-v2' -%}
+                  <details-disclosure {{ block.shopify_attributes }}>
+                    <details
+                      class="spacifications disclosure disclosure--row"
+                      {% if block.settings.open %}
+                        open
+                      {% endif %}
+                    >
+                      <summary>
+                        <div class="flex justify-between items-center tab_collapse">
+                          <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0 tab_btn">
+                            {{- block.settings.heading_2 | default: block.settings.page.title -}}
+                          </h2>
+                        </div>
+                      </summary>
+                      <div class="disclosure__panel has-motion">
+                        <div class="disclosure__content rte">
+                          <div class="detail_container download">
+                            <div class="detail_inner">
+                              {% if block.settings.Item_type_head2 != blank %}
+                                <div class="Item_type_head">
+                                  {{ block.settings.Item_type_head2 }}
+                                  <div class="orange_line"></div>
+                                </div>
+                              {% endif %}
+
+                              {% if block.settings.Item_img != blank %}
+                                <div class="deatails_flex_no">
+                                  <div class="Item_img">
+                                    <img src="{{ block.settings.Item_img | img_url:'master'}}" class="item_img_inner">
+                                  </div>
+                                </div>
+                              {% endif %}
+                              {% if block.settings.Item_type_desc %}
+                                <div class="deatails_flex_no">
+                                  <div class="Item_type_desc">
+                                    {{ block.settings.Item_type_desc }}
+                                  </div>
+                                  {% if block.settings['item-btn'] != blank %}
+                                    <a class="view_btn" href="{{  block.settings.item-btn-link }}">
+                                      {{- block.settings['item-btn'] -}}
+                                    </a>
+                                  {% endif %}
+                                </div>
+                              {% endif %}
+
+                              {% if block.settings.Item_download_btn != blank %}
+                                <div class="deatails_flex">
+                                  {% if block.settings.Item_download_icon %}
+                                    <div class="Item_icon">
+                                      <img
+                                        src="{{ block.settings.Item_download_icon | img_url:'master'}}"
+                                        class="item_img_inner"
+                                      >
+                                    </div>
+                                  {% endif %}
+                                  <div class="Item_name full-width">
+                                    <a class="download_link" href="{{block.settings.Item_download_btn_link}}">
+                                      {{ block.settings.Item_download_btn }}
+                                    </a>
+                                  </div>
+                                </div>
+                              {% endif %}
+
+                              {% if block.settings.Item_download_btn2 != blank %}
+                                <div class="deatails_flex">
+                                  {% if block.settings.Item_download_icon2 %}
+                                    <div class="Item_icon">
+                                      <img
+                                        src=" {{ block.settings.Item_download_icon2 | img_url:'master'}}"
+                                        class="item_img_inner"
+                                      >
+                                    </div>
+                                  {% endif %}
+                                  <div class="Item_name full-width">
+                                    <a class="download_link" href=" {{ block.settings.Item_download_btn_link2}}">
+                                      {{ block.settings.Item_download_btn2 }}
+                                    </a>
+                                  </div>
+                                </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </details>
+                  </details-disclosure>
+
+                {%- when 'legal' -%}
+                  <details-disclosure {{ block.shopify_attributes }}>
+                    {%- if block.settings.legal -%}
+                      {% if product.metafields.custom.manufacturer.value == 'Viking®' %}
+                        <div class="legal_msg_container">
+                          <div class="legal_inner">
+                            {% if block.settings.legal_message_content != blank %}
+                              <div class="deatails_flex_no">
+                                <div class="legal_desc">
+                                  {{ block.settings.legal_message_content }}
+                                </div>
+                              </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      {% endif %}
+                    {% endif %}
+                  </details-disclosure>
+
+                {%- when 'tabs' -%}
+                  {%- liquid
+                    assign tabs = ''
+                    if block.settings.show_description
+                      assign tabs = ',0'
+                    endif
+                    if block.settings.show_specification
+                      assign tabs = tabs | append: ',4'
+                    endif
+                    if block.settings.show_reviews
+                      assign tabs = tabs | append: ',5'
+                    endif
+                    if block.settings.tab_1_title != blank or block.settings.tab_1_page.title != blank
+                      assign tabs = tabs | append: ',1'
+                    endif
+                    if block.settings.tab_2_title != blank or block.settings.tab_2_page.title != blank
+                      assign tabs = tabs | append: ',2'
+                    endif
+                    if block.settings.tab_3_title != blank or block.settings.tab_3_page.title != blank
+                      assign tabs = tabs | append: ',3'
+                    endif
+                    assign tab_indices = tabs | remove_first: ',' | split: ','
+                  -%}
+
+                  {%- if block.settings.show_specification and block.settings.spec_metafields -%}
+                    {%- capture specification -%}
+              {%- assign metafield_array = block.settings.spec_metafields | newline_to_br | strip_newlines | split: '<br />' -%}
+              {%- for key_value in metafield_array -%}
+                {%- liquid
+                  assign parts = key_value | split: ':'
+                  assign label = parts.first | strip | replace: '"', ''
+                  assign metafield_key = parts.last | strip
+                  assign metafield_key_parts = metafield_key | split: "."
+                  assign metafield_namespace_index = metafield_key_parts | size | minus: 2
+                  assign metafield_key = metafield_key_parts | last
+                  assign metafield_namespace = metafield_key_parts[metafield_namespace_index]
+                  assign metafield = product.metafields[metafield_namespace][metafield_key]
+
+                  capture metafield_output
+                    if metafield.type contains "list."
+                      for item in metafield.value
+                        assign metafield_type = metafield.type | replace: "list.", ""
+                        assign comma = ""
+                        if forloop.last == false
+                          assign comma = ", "
+                        endif
+                        render 'render-metafield', metafield: metafield, metafield_type: metafield_type, metafield_value: item, comma: comma
+                        if forloop.last == false and metafield_type == "file_reference"
+                          echo "<div class='mt-2'></div>"
+                        endif
+                      endfor
+                    elsif metafield.value
+                      render 'render-metafield', metafield: metafield, metafield_type: metafield.type, metafield_value: metafield.value
+                    endif
+                  endcapture
+                -%}
+                {%- unless metafield_output contains "Liquid error" -%}
+                  {%- unless metafield_output == blank and block.settings.spec_show_empty_metafields == false -%}
+                    <li class="product-spec__item flex flex-col gap-x-theme md:flex-row pb-4 mb-4 last:pb-0 last:mb-0">
+                      <div class="product-spec__label{% if block.settings.spec_right_align %} product-spec__label--right{% endif %} mb-2 block font-bold">
+                        {{ label }}
+                      </div>
+                      <div class="product-spec__value {% if metafield.type contains "color" %}flex{% else %}block{% endif %}{% if block.settings.spec_right_align %} text-end justify-end grow{% endif %}">
+                        {%- if metafield_output == blank -%}
+                          {{ block.settings.spec_empty_field_text }}
+                        {%- else -%}
+                          {{ metafield_output }}
+                        {%- endif -%}
+                      </div>
+                    </li>
+                  {%- endunless -%}
+                {%- endunless -%}
+              {%- endfor -%}
+            {%- endcapture -%}
+                  {%- endif -%}
+
+                  {%- assign first_tab_rendered = false -%}
+
+                  {%- if tabs.size > 0 -%}
+                    <div class="product-details__block" {{ block.shopify_attributes }}>
+                      {%- for i in tab_indices -%}
+                        {%- liquid
+                          assign prevent_tab_render = false
+
+                          if i == '0'
+                            assign title = 'products.product.description' | t
+                          elsif i == '4' and specification == blank
+                            assign title = 'products.product.specification' | t
+                            assign prevent_tab_render = true
+                          elsif i == '4'
+                            assign title = 'products.product.specification' | t
+                          elsif i == '5' and block.settings.show_reviews
+                            assign reviews_count = product.metafields.spr.reviews | split: '"reviewCount": "' | last | split: '",' | first | plus: 0
+                            assign title = 'products.product.reviews' | t | append: ' (' | append: reviews_count | append: ')'
+                          else
+                            assign title_id = 'tab_' | append: i | append: '_title'
+                            assign text_id = 'tab_' | append: i | append: '_text'
+                            assign page_id = 'tab_' | append: i | append: '_page'
+                            assign title = block.settings[title_id] | default: block.settings[page_id].title
+                          endif
+                        -%}
+
+                        {%- if block.settings.style == 'collapsible' and prevent_tab_render == false -%}
+                          <details-disclosure>
+                            <details
+                              class="disclosure disclosure--row"
+                              {% if first_tab_rendered == false and block.settings.open_first %}
+                                open
+                              {% endif %}
+                            >
+                              <summary>
+                                <div class="flex justify-between items-center">
+                                  <h2 class="disclosure__title h5 mb-0">{{ title }}</h2>
+                                  <span class="disclosure__toggle">
+                                    {%- if settings.disclosure_toggle == 'plus' -%}
+                                      {% render 'icon-plus' %}
+                                    {%- else -%}
+                                      {% render 'icon-chevron-down' %}
+                                    {%- endif -%}
+                                  </span>
+                                </div>
+                              </summary>
+                              <div class="disclosure__panel has-motion">
+                                <div class="disclosure__content{% unless i == "4" %} rte product-description{% endunless %}">
+                                  {%- if forloop.first and block.settings.show_description -%}
+                                    {{ product.description }}
+                                  {%- elsif i == '4' and specification != blank -%}
+                                    <ul class="product-spec">
+                                      {{ specification }}
+                                    </ul>
+                                  {%- elsif i == '5' and block.settings.show_reviews -%}
+                                    <div class="spr-reviews" id="shopify-product-reviews" data-id="{{ product.id }}">
+                                      {{ product.metafields.spr.reviews }}
+                                    </div>
+                                  {%- else -%}
+                                    {{ block.settings[text_id] }}
+                                    {{ block.settings[page_id].content }}
+                                  {%- endif -%}
+                                </div>
+                              </div>
+                            </details>
+                          </details-disclosure>
+                          {%- assign first_tab_rendered = true -%}
+                        {%- else -%}
+                          {%- capture tab_btns -%}
+                    {{ tab_btns }}
+                    <button type="button" class="tablist__tab font-bold" id="tab-{{ i }}" role="tab" aria-controls="panel-{{ i }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                      {{ title }}
+                    </button>
+                  {%- endcapture -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+
+                      {%- if block.settings.style == 'tabs' -%}
+                        <tabbed-content>
+                          <div class="tablist overflow-hidden relative mb-4 no-js-hidden">
+                            <div class="tablist__scroller flex" role="tablist">
+                              {{ tab_btns }}
+                            </div>
+                          </div>
+                          {%- for i in tab_indices -%}
+                            {%- liquid
+                              assign text_id = 'tab_' | append: i | append: '_text'
+                              assign page_id = 'tab_' | append: i | append: '_page'
+                            -%}
+                            <div
+                              id="panel-{{ i }}"
+                              role="tabpanel"
+                              tabindex="0"
+                              aria-labelledby="tab-{{ i }}"
+                              {% unless forloop.first %}
+                                hidden
+                              {% endunless %}
+                            >
+                              {%- if forloop.first and block.settings.show_description -%}
+                                <div class="rte product-description">
+                                  {{ product.description }}
+                                </div>
+                              {%- elsif i == '4' and specification != blank -%}
+                                <ul class="product-spec">
+                                  {{ specification }}
+                                </ul>
+                              {%- elsif i == '5' and block.settings.show_reviews -%}
+                                <div class="spr-reviews" id="shopify-product-reviews" data-id="{{ product.id }}">
+                                  {{ product.metafields.spr.reviews }}
+                                </div>
+                              {%- else -%}
+                                <div class="rte">
+                                  {{ block.settings[text_id] }}
+                                  {{ block.settings[page_id].content }}
+                                </div>
+                              {%- endif -%}
+                            </div>
+                          {%- endfor -%}
+                        </tabbed-content>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.style == 'tabs' -%}
+                    <script src="{{ 'tabs.js' | asset_url }}" defer="defer"></script>
+                  {%- endif -%}
+
+                {%- when 'highlight-text' -%}
+                  {%- if block.settings.title != blank or block.settings.text != blank -%}
+                    {%- liquid
+                      assign last_section_index = forloop.index0 | minus: 1
+                      assign next_section_index = forloop.index
+                      assign last_section_was_highlight = false
+                      assign next_section_is_highlight = false
+
+                      if last_section_index > -1 and section.blocks[last_section_index].type == 'highlight-text'
+                        assign last_section_was_highlight = true
+                      endif
+
+                      if section.blocks[next_section_index].type == 'highlight-text'
+                        assign next_section_is_highlight = true
+                      endif
+                    -%}
+
+                    {%- if last_section_was_highlight == false and next_section_is_highlight -%}
+                      <div
+                        class="product-details__block product-details__highlight-grid grid sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2"
+                      >
+                    {%- endif -%}
+
+                    <div
+                      class="{% unless last_section_was_highlight or next_section_is_highlight %}product-details__block {% endunless %}product-details__highlight text-center"
+                      {{ block.shopify_attributes }}
+                    >
+                      {%- if block.settings.title != blank -%}
+                        <p class="h4">{{- block.settings.title | escape -}}</p>
+                      {%- endif -%}
+                      {%- if block.settings.text != blank -%}
+                        <div class="rte large-text">{{ block.settings.text }}</div>
+                      {%- endif -%}
+                    </div>
+
+                    {%- if last_section_was_highlight and next_section_is_highlight == false -%}
+                      </div>
+                    {%- endif -%}
+                  {%- endif -%}
+
+                {%- when 'payment-methods' -%}
+                  <div class="product-details__block panel" {{ block.shopify_attributes }}>
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="h5 mb-6">{{- block.settings.title | escape -}}</h3>
+                    {%- endif -%}
+
+                    {%- if block.settings.title1 != blank -%}
+                      <p class="h6 regular-text mb-4" id="payment-methods-title">
+                        {{- block.settings.title1 | escape -}}
+                      </p>
+                    {%- endif -%}
+
+                    {%- if block.settings.show_payment_icons -%}
+                      <div class="mb-4">
+                        <ul
+                          class="payment-icons flex flex-wrap"
+                          role="list"
+                          {%- if block.settings.title1 != blank -%}
+                            aria-labelledby="payment-methods-title"
+                          {% endif %}
+                        >
+                          {%- for type in shop.enabled_payment_types -%}
+                            <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                    {%- endif -%}
+
+                    {%- if block.settings.text1 != blank -%}
+                      <div class="rte mb-4">{{ block.settings.text1 }}</div>
+                    {%- endif -%}
+
+                    {%- if block.settings.title2 != blank -%}
+                      <p class="h6 regular-text mb-4 mt-8">{{- block.settings.title2 | escape -}}</p>
+                    {%- endif -%}
+
+                    {%- if block.settings.image -%}
+                      {% render 'image',
+                        image: block.settings.image,
+                        src_width: block.settings.image.width,
+                        class: 'mb-4'
+                      %}
+                    {%- endif -%}
+
+                    {%- if block.settings.text2 != blank -%}
+                      <div class="rte mb-4">{{ block.settings.text2 }}</div>
+                    {%- endif -%}
+                  </div>
+              {%- endcase -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Tab Filter Section -->
+      <div class="tabs_filter_main desktop_tab_pro">
+        <div class="tabs_filter_main_inner">
+          <div class="tabs_button">
+            {% if section.settings.tab_btn != blank %}
+              <div class="tab_btn_icon warranty active">
+                {% if section.settings.tabs_btn_icon != blank %}
+                  <img class="tab_icon" src="{{ section.settings.tabs_btn_icon | img_url:'master' }}">
+                {% endif %}
+                <button id="warranty" class="tabs_btn ">{{ section.settings.tab_btn }}</button>
+              </div>
+            {% endif %}
+
+            {% if section.settings.tab_btn2 != blank %}
+              <div class="tab_btn_icon Build">
+                {% if section.settings.tabs_btn_icon2 != blank %}
+                  <img class="tab_icon" src="{{ section.settings.tabs_btn_icon2 | img_url:'master' }}">
+                {% endif %}
+                <button id="Build" class="tabs_btn">{{ section.settings.tab_btn2 }}</button>
+              </div>
+            {% endif %}
+
+            {% if section.settings.tab_btn3 != blank %}
+              <div class="tab_btn_icon Condition">
+                {% if section.settings.tabs_btn_icon3 != blank %}
+                  <img class="tab_icon" src="{{ section.settings.tabs_btn_icon3 | img_url:'master' }}">
+                {% endif %}
+                <button id="Condition" class="tabs_btn">{{ section.settings.tab_btn3 }}</button>
+              </div>
+            {% endif %}
+          </div>
+
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'warranty-content' -%}
+                <div class="warranty-content">
+                  <div class="warranty-content-inner">
+                    <div class="warranty_content_one">{{ block.settings.warranty_content_one }}</div>
+
+                    {% if block.settings.warranty_content_box != blank %}
+                      <div class="warranty_content_with_icon">
+                        <div class="warranty_content_with_icon_inner">
+                          {% if block.settings.warranty_content_with_icon != blank %}
+                            <img src="{{ block.settings.warranty_content_with_icon | img_url:'master' }}">
+                          {% endif %}
+                        </div>
+                        <div class="warranty_content_box">
+                          {{ block.settings.warranty_content_box }}
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    {% if block.settings.warranty_content_box2 != blank %}
+                      <div class="warranty_content_with_icon">
+                        <div class="warranty_content_with_icon_inner">
+                          {% if block.settings.warranty_content_with_icon2 != blank %}
+                            <img src="{{ block.settings.warranty_content_with_icon2 | img_url:'master' }}">
+                          {% endif %}
+                        </div>
+                        <div class="warranty_content_box">
+                          {{ block.settings.warranty_content_box2 }}
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    {% if block.settings.warranty_content_box3 != blank %}
+                      <div class="warranty_content_with_icon">
+                        <div class="warranty_content_with_icon_inner">
+                          {% if block.settings.warranty_content_with_icon3 != blank %}
+                            <img src="{{ block.settings.warranty_content_with_icon3 | img_url:'master' }}">
+                          {%- endif %}
+                        </div>
+                        <div class="warranty_content_box">
+                          {{ block.settings.warranty_content_box3 }}
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+              {%- when 'Build-to-Order' -%}
+                <div class="Build-to-Order-content">
+                  <div class="Build-to-Order-content-inner">
+                    <div class="Build-to-Order_headings">
+                      <h1 class="Build-to-Order_heading_h1">{{ block.settings.Build_heading }}</h1>
+                      <h2 class="Build-to-Order_heading_h2">{{ block.settings.Build_subheading }}</h2>
+                    </div>
+                    <div class="Build-to-Order_content">
+                      {{ block.settings.Build_Content }}
+                    </div>
+
+                    <div class="content_with_image">
+                      <div class="Build-to-Order_content_with_icon">
+                        <div class="icon_text rte icon_flex">
+                          {%- if block.settings.custom_icon1 != blank -%}
+                            <img
+                              src="{{ block.settings.custom_icon1 | img_url:'master' }}"
+                              class="custom_icon"
+                            >
+                          {%- endif -%}
+
+                          {%- if block.settings.icon_text1 != blank -%}
+                            <p class="custom_icon__text">
+                              {{ block.settings.icon_text1 }}
+                            </p>
+                          {%- endif -%}
+                        </div>
+
+                        <div class="icon_text rte icon_flex">
+                          {%- if block.settings.custom_icon2 != blank -%}
+                            <img
+                              src="{{ block.settings.custom_icon2 | img_url:'master' }}"
+                              class="custom_icon"
+                            >
+                          {%- endif -%}
+
+                          {%- if block.settings.icon_text2 != blank -%}
+                            <p class="custom_icon__text">
+                              {{ block.settings.icon_text2 }}
+                            </p>
+                          {%- endif -%}
+                        </div>
+
+                        <div class="icon_text rte icon_flex">
+                          {%- if block.settings.custom_icon3 != blank -%}
+                            <img
+                              src="{{ block.settings.custom_icon3 | img_url:'master' }}"
+                              class="custom_icon"
+                            >
+                          {%- endif -%}
+
+                          {%- if block.settings.icon_text3 != blank -%}
+                            <p class="custom_icon__text">
+                              {{ block.settings.icon_text3 }}
+                            </p>
+                          {%- endif -%}
+                        </div>
+
+                        <div class="icon_text rte icon_flex">
+                          {%- if block.settings.custom_icon4 != blank -%}
+                            <img
+                              src="{{ block.settings.custom_icon4 | img_url:'master' }}"
+                              class="custom_icon"
+                            >
+                          {%- endif -%}
+
+                          {%- if block.settings.icon_text4 != blank -%}
+                            <p class="custom_icon__text">
+                              {{ block.settings.icon_text4 }}
+                            </p>
+                          {%- endif -%}
+                        </div>
+
+                        <div class="icon_text rte icon_flex">
+                          {%- if block.settings.custom_icon5 != blank -%}
+                            <img
+                              src="{{ block.settings.custom_icon5 | img_url:'master' }}"
+                              class="custom_icon"
+                            >
+                          {%- endif -%}
+
+                          {%- if block.settings.icon_text5 != blank -%}
+                            <p class="custom_icon__text">
+                              {{ block.settings.icon_text5 }}
+                            </p>
+                          {%- endif -%}
+                        </div>
+                        <div class="Build-to-Order_content_box">
+                          {{ block.settings.Build_to_order_content_box }}
+                        </div>
+                      </div>
+                      <div class="Build-to-Order_right_image">
+                        {% if block.settings.build_content_right_img != blank %}
+                          <img src="{{ block.settings.build_content_right_img | img_url:'master' }}">
+                        {%- endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              {%- when 'Condition-Grading' -%}
+                <div class="Condition-Grading">
+                  <div class="Condition-Grading-inner">
+                    <div class="Condition-Grading-container">
+                      <div class="Condition-Grading-text-block">
+                        {{ block.settings.grading_text_block_1 }}
+                      </div>
+                      <div class="Condition-Grading-text-box_main">
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading }}</h3>
+                          <div class="box_text">{{ block.settings.box_text }}</div>
+                        </div>
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading2 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text2 }}</div>
+                        </div>
+
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading3 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text3 }}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="Condition-Grading-container">
+                      <div class="Condition-Grading-text-block">
+                        {{ block.settings.grading_text_block_2 }}
+                      </div>
+                      <div class="Condition-Grading-text-box_main">
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading4 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text4 }}</div>
+                        </div>
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading5 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text5 }}</div>
+                        </div>
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading6 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text6 }}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="Condition-Grading-container">
+                      <div class="Condition-Grading-text-block">
+                        {{ block.settings.grading_text_block_3 }}
+                      </div>
+                      <div class="Condition-Grading-text-box_main">
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading7 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text7 }}</div>
+                        </div>
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading8 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text8 }}</div>
+                        </div>
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading9 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text9 }}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="Condition-Grading-container">
+                      <div class="Condition-Grading-text-block">
+                        {{ block.settings.grading_text_block_4 }}
+                      </div>
+                      <div class="Condition-Grading-text-box_main">
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading10 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text10 }}</div>
+                        </div>
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading11 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text11 }}</div>
+                        </div>
+                        <div class="Condition-Grading-text-box">
+                          <h3 class="box_heading">{{ block.settings.box_heading12 }}</h3>
+                          <div class="box_text">{{ block.settings.box_text12 }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+
+        {% if section.settings.show_rigth_form %}
+          <div class="tabsfilter_form_right">
+            <div class="support_form mega_form pruduct">
+              {%- if section.settings.form_heading != blank -%}
+                <div
+                  class="mb-heading reading-width rte cc-animate-init cc-animate-in"
+                  data-cc-animate
+                >
+                  <h3 class="column_title">{{ section.settings.form_heading | escape }}</h3>
+                  <p class="column_desc">{{ section.settings.form_desc }}</p>
+                </div>
+              {%- endif -%}
+
+              {%- form 'contact', id: form_id, class: 'form reading-width' -%}
+                <div class="form__grid grid grid-cols-2 gap-x-theme gap-y-6" data-cc-animate>
+                  <div class="col-span-2 is-required">
+                    <input
+                      type="text"
+                      class="input w-full"
+                      id="{{ form_id }}-part"
+                      name="contact[{{ 'contact.form.part' | t }}]"
+                      pattern="[0-9\-]*"
+                      placeholder="Type Of Part"
+                      autocomplete="part"
+                      value="{% if form.part %}{{ form.part }}{% elsif customer %}{{ customer.part}}{% endif %}"
+                      aria-required="true"
+                      required
+                    >
+                  </div>
+                  <div class="col-span-2 is-required">
+                    <input
+                      type="text"
+                      class="input w-full"
+                      id="{{ form_id }}-partnumber"
+                      name="contact[{{ 'contact.form.partnumber' | t }}]"
+                      pattern="[0-9\-]*"
+                      placeholder="Part Number"
+                      autocomplete="partnumber"
+                      value="{% if form.partnumber %}{{ form.partnumber }}{% elsif customer %}{{ customer.partnumber}}{% endif %}"
+                      aria-required="true"
+                      required
+                    >
+                  </div>
+                  <div class="col-span-2 is-required">
+                    <input
+                      type="text"
+                      class="input w-full"
+                      id="{{ form_id }}-name"
+                      placeholder="Your Name"
+                      name="contact[{{ 'contact.form.name' | t }}]"
+                      autocomplete="name"
+                      value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                      aria-required="true"
+                      required
+                    >
+                  </div>
+                  <div class="col-span-2 is-required">
+                    <input
+                      type="email"
+                      class="input w-full"
+                      id="{{ form_id }}-email"
+                      placeholder="Your Email"
+                      name="contact[email]"
+                      autocomplete="email"
+                      value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                      {%- if form.errors contains 'email' %}
+                        aria-invalid="true"
+                        aria-describedby="{{ form_id }}-email-error"
+                      {%- endif %}
+                      aria-required="true"
+                      required
+                    >
+                  </div>
+
+                  <div class="col-span-2 is-required flexv2">
+                    <input
+                      type="checkbox"
+                      name="contact[email-subscribe]"
+                      value="Email me monthly inventory updates and special offers."
+                      aria-required="true"
+                      required
+
+                    ><label
+                      class="support_check"
+                      for="Email me monthly inventory updates and special offers."
+                      >Email me monthly inventory updates and special offers.</label
+                    >
+                  </div>
+
+                  {%- if form.errors contains block.type -%}
+                    <p class="form__field-error" id="{{ form_id }}-{{ block.type }}-error">
+                      {{ form.errors.translated_fields[block.type] | capitalize }}
+                      {{ form.errors.messages[block.type] }}
+                    </p>
+                  {%- endif -%}
+                </div>
+
+                {%- if form.posted_successfully? -%}
+                  <div
+                    class="alert mt-8 bg-success-bg text-success-text"
+                    tabindex="-1"
+                    autofocus
+                    {% if settings.animations_enabled != 'disabled' %}
+                      data-cc-animate
+                    {% endif %}
+                  >
+                    {{ 'contact.form.post_success' | t }}
+                  </div>
+                {%- elsif form.errors -%}
+                  <div
+                    class="alert mt-8 bg-error-bg text-error-text"
+                    tabindex="-1"
+                    autofocus
+                    {% if settings.animations_enabled != 'disabled' %}
+                      data-cc-animate
+                    {% endif %}
+                  >
+                    <h2 class="h5 text-current">{{ 'contact.form.error_heading' | t }}</h2>
+                    <ul class="styled-list">
+                      <li>
+                        <a class="link text-current" href="#{{ form_id }}-email">
+                          {{- form.errors.translated_fields.email | capitalize }}
+                          {{ form.errors.messages.email -}}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                {%- endif -%}
+
+                {%- if section.blocks.size > 0 -%}
+                  <div
+                    class="mt-6"
+                    {% if settings.animations_enabled != 'disabled' %}
+                      data-cc-animate
+                    {% endif %}
+                  >
+                    <button class="{{ section.settings.button_style }} menu_btn w-full md:w-auto">ASK AN EXPERT</button>
+                  </div>
+                {%- endif -%}
+              {%- endform -%}
+            </div>
+            <div class="custom_icon_with_text">
+              <div class="footer-block__text rte icon_flex">
+                {%- if section.settings.peripherals_custom_icon != blank -%}
+                  <img
+                    src="{{ section.settings.peripherals_custom_icon | img_url:'master' }}"
+                    class="custom_icon"
+                  >
+                {%- endif -%}
+                <div class="icon_text-inner-flex">
+                  {%- if section.settings.peripherals_icon_text != blank -%}
+                    <h4 class="custom_icon__title">
+                      {{ section.settings.peripherals_icon_title }}
+                    </h4>
+                  {%- endif -%}
+
+                  {%- if section.settings.peripherals_icon_text != blank -%}
+                    <p class="custom_icon__text">
+                      {{ section.settings.peripherals_icon_text }}
+                    </p>
+                  {%- endif -%}
+                </div>
+              </div>
+              <div class="footer-block__text rte icon_flex">
+                {%- if section.settings.peripherals_custom_icon2 != blank -%}
+                  <img
+                    src="{{ section.settings.peripherals_custom_icon2 | img_url:'master' }}"
+                    class="custom_icon"
+                  >
+                {%- endif -%}
+                <div class="icon_text-inner-flex">
+                  {%- if section.settings.peripherals_icon_text2 != blank -%}
+                    <h4 class="custom_icon__title">
+                      {{ section.settings.peripherals_icon_title2 }}
+                    </h4>
+                  {%- endif -%}
+
+                  {%- if section.settings.peripherals_icon_text2 != blank -%}
+                    <p class="custom_icon__text">
+                      {{ section.settings.peripherals_icon_text2 }}
+                    </p>
+                  {%- endif -%}
+                </div>
+              </div>
+              <div class="footer-block__text rte icon_flex">
+                {%- if section.settings.peripherals_custom_icon3 != blank -%}
+                  <img
+                    src="{{ section.settings.peripherals_custom_icon3 | img_url:'master' }}"
+                    class="custom_icon"
+                  >
+                {%- endif -%}
+                <div class="icon_text-inner-flex">
+                  {%- if section.settings.peripherals_icon_text3 != blank -%}
+                    <h4 class="custom_icon__title">
+                      {{ section.settings.peripherals_icon_title3 }}
+                    </h4>
+                  {%- endif -%}
+
+                  {%- if section.settings.peripherals_icon_text3 != blank -%}
+                    <p class="custom_icon__text">
+                      {{ section.settings.peripherals_icon_text3 }}
+                    </p>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div
+      class="product-info{% if section.settings.stick_on_scroll %} product-info--sticky{% endif %}"
+      {% if section.settings.stick_on_scroll %}
+        data-sticky-height-elems="#product-media,.cc-main-product + .cc-product-details .container"
+      {% endif %}
+    >
+      <div class="info_sticky_container">
+        {%- if section.settings.stick_on_scroll -%}
+          <script src="{{ 'sticky-scroll-direction.js' | asset_url }}" defer="defer"></script>
+          <sticky-scroll-direction data-min-sticky-size="md">
+            <div class="product-info__sticky">
+        {%- endif -%}
+
+        {%- assign has_variant_picker = false -%}
+        {%- if section.settings.sticky_atc_panel -%}
+          <a class="product-options--anchor" id="product-info" rel="nofollow"></a>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              <div class="product-info__block" {{ block.shopify_attributes }}>
+                {% render block %}
+              </div>
+
+            {%- when 'vendor-sku' -%}
+              {%- if block.settings.show_vendor or block.settings.show_sku -%}
+                <div
+                  class="product-info__block product-info__block--sm product-vendor-sku text-sm"
+                  {{ block.shopify_attributes }}
+                >
+                  {%- if block.settings.show_vendor and product.vendor != blank -%}
+                    {%- liquid
+                      assign vendor_handle = product.vendor | handle
+                      if collections[vendor_handle].handle == vendor_handle
+                        assign vendor_url = collections[vendor_handle].url
+                      else
+                        assign vendor_url = product.vendor | url_for_vendor
+                      endif
+                    -%}
+                    <span class="product-vendor">{{ product.vendor | link_to: vendor_url }}</span>
+                  {%- endif -%}
+
+                  {%- if block.settings.show_sku and current_variant.sku != blank -%}
+                    <span class="product-sku">
+                      {%- if block.settings.show_vendor and product.vendor != blank %} &nbsp;|&nbsp; {% endif -%}
+                      <span>{{ 'products.product.sku' | t }}</span>
+                      <span class="product-sku__value">{{ current_variant.sku }}</span>
+                    </span>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+            {%- when 'info_div' -%}
+              <div class="group-14807">
+                {% if block.settings.product_title != blank %}
+                  <h2 class="g-124-a-drop-in-replacement-pump">
+                    {{ block.settings.product_title }}
+                  </h2>
+                {% endif %}
+
+                {% if block.settings.product_info != blank %}
+                  <div class="this-pump-replaces-the-viking">
+                    {{ block.settings.product_info }}
+                  </div>
+                {% endif %}
+                <div class="group-14806">
+                  {% if block.settings.check_img != blank %}
+                    <div class="check-1-2">
+                      <img class="check_icon" src="{{ block.settings.check_img |img_url : 'master' }}">
+                    </div>
+                  {% endif %}
+                  <div class="group-14782">
+                    <div class="group-14781">
+                      <div class="grade-a-grade-excellent">
+                        <span>
+                          <span class="grade-a-grade-excellent-span">{{ block.settings.grade_title }}</span>
+                          <span class="grade-a-grade-excellent-span2"> {{ block.settings.grade }}</span>
+                        </span>
+                      </div>
+                      <div class="condition-new-surplus">
+                        <span
+                          ><span class="condition-new-surplus-span">{{ block.settings.condition_title }}</span
+                          ><span class="condition-new-surplus-span2"> {{ block.settings.condition }}</span></span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="underline-buttons">
+                  <a class="view-all" href="{{ block.settings.means_btn_link }}">{{ block.settings.means_btn }}</a>
+                </div>
+              </div>
+              <!-- price -->
+            {%- if product.metafields.custom.product_show_price.value == false -%}
+              <div class="product-info__block product-info__block--sm product-price" {{ block.shopify_attributes }}>
+                <div class="product-info__price">
+                  {% render 'price', product: product, use_variant: true %}
+                </div>
+            
+                {%- if block.settings.show_tax_and_shipping -%}
+                  {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+                    <div class="product-policies text-sm rte">
+                      {%- if cart.taxes_included -%}
+                        {{ 'products.product.include_taxes' | t }}
+                      {%- endif -%}
+                      {%- if shop.shipping_policy.body != blank -%}
+                        {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- assign instalments_form_id = 'instalments-form-' | append: section.id -%}
+                {%- form 'product', product, class: 'js-instalments-form  text-sm mt-2', id: instalments_form_id -%}
+                  <input type="hidden" name="id" value="{{ current_variant.id }}">
+                  {{ form | payment_terms }}
+                {%- endform -%}
+              
+              </div>
+              {%- endif -%} 
+              <!-- end of IF GET A QUOTE block --> 
+              <!-- inventory msg -->
+              <div class="inventory-msg">
+                {% if product.metafields.custom.product_source.value contains 'Fast Source'
+                  and product.metafields.custom.product_show_price.value == true
+                %}
+                  <div class="fast_source">
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="fast_text instock"><b>In-Stock |</b></p>
+                      <p class="instock_msg">
+                        Ships 1-3 Days <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% else %}
+                      <p class="fast_text instock"><b>In-Stock |</b></p>
+                      <p class="outstock_msg">
+                        Ships 2-5 Days <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% endif %}
+                  </div>
+                {% elsif product.metafields.custom.product_source.value contains 'Slow Source'
+                  and product.metafields.custom.product_show_price.value == true
+                %}
+                  <div class="fast_source">
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="fast_text instock"><b>In-Stock |</b></p>
+                      <p class="instock_msg">
+                        Ships 1-3 Days <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% else %}
+                      <p class="fast_text"><b>Incoming Stock |</b></p>
+                      <p class="outstock_msg">
+                        Lead Times Vary <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% endif %}
+                  </div>
+                {% elsif product.metafields.custom.product_source.value contains 'No Source'
+                  and product.metafields.custom.product_show_price.value == true
+                %}
+                  <div class="fast_source">
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="fast_text instock"><b>In-Stock</b></p>
+                      <p class="instock_msg">
+                        Ships 1-3 Days <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% else %}
+                      <p class="fast_text out-stock"><b>Out of Stock</b></p>
+                      <p class="outstock_msg">
+                        Please request a quote below, and our team will be happy to search our unlisted inventory as
+                        well as partner network.
+                      </p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                <!-- Quote button conditons -->
+                {% if product.metafields.custom.product_source.value contains 'Fast Source'
+                  and product.metafields.custom.product_show_price.value == false
+                %}
+                  <div class="fast_source">
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="fast_text instock"><b>In-Stock</b></p>
+                      <p class="instock_msg">
+                        Ships 1-3 Days <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% else %}
+                      <p class="fast_text instock"><b>In-Stock</b></p>
+                      <p class="outstock_msg">
+                        Ships 2-5 Days <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% endif %}
+                  </div>
+                {% elsif product.metafields.custom.product_source.value contains 'Slow Source'
+                  and product.metafields.custom.product_show_price.value == false
+                %}
+                  <div class="fast_source">
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="fast_text instock"><b>In-Stock</b></p>
+                      <p class="instock_msg">
+                        Ships 1-3 Days <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% else %}
+                      <p class="fast_text"><b>Incoming Stock</b></p>
+                      <p class="outstock_msg">
+                        Lead Times Vary <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% endif %}
+                  </div>
+                {% elsif product.metafields.custom.product_source.value contains 'No Source'
+                  and product.metafields.custom.product_show_price.value == false
+                %}
+                  <div class="fast_source">
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="fast_text instock"><b>In-Stock</b></p>
+                      <p class="instock_msg">
+                        Ships 1-3 Days <a href="javascript:void(0);" class="need_faster">(Need it faster?)</a>
+                      </p>
+                    {% else %}
+                      <p class="fast_text out-stock"><b>Out of Stock</b></p>
+                      <p class="outstock_msg">
+                        Please request a quote below, and our team will be happy to search our unlisted inventory as
+                        well as partner network.
+                      </p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                <div class="fusion-header-tagline need_faster_tooltip">
+                  <h4>
+                    <strong>Need it faster? <span>No problem!</span></strong>
+                  </h4>
+                  <span class="offer_tooltip_need_faster"
+                    >We offer expedite, super rush and hot shot delivery almost anywhere in the world.<br>
+                    <a href="tel:(844) 800-7867" class="checl_rack_btn">Give Us a Call: (844) 800-7867</a>
+                  </span>
+                </div>
+
+                <script>
+                  $(document).ready(function () {
+                    $("a.need_faster").click(function () {
+                      $(".fusion-header-tagline.need_faster_tooltip").toggle();
+                    });
+                  });
+                </script>
+              </div>
+              <!-- inventory msg end -->
+
+              <!-- variant picker start -->
+
+              {%- unless product.has_only_default_variant -%}
+                {%- assign has_variant_picker = true -%}
+                {%- if section.settings.sticky_atc_panel and product.available -%}
+                  <a class="product-options--anchor" id="variants" rel="nofollow"></a>
+                {%- endif -%}
+                <div class="product-info__block product-options" {{ block.shopify_attributes }}>
+                  {% render 'variant-picker',
+                    product: product,
+                    product_form_id: product_form_id,
+                    block: block,
+                    media_ratio: media_ratio,
+                    swatch_crop: section.settings.media_crop
+                  %}
+                </div>
+              {%- endunless -%}
+
+              {%- if block.settings.show_backorder_text -%}
+                <div class="product-info__block product-backorder">
+                  {% render 'backorder', product: product, variant: current_variant %}
+                </div>
+              {%- endif -%}
+              <!-- variant picker end -->
+            
+              <!-- buy now button -->
+            
+            
+              <div class="product-info__block buy_atc" {{ block.shopify_attributes }}>
+                <product-form>
+                  <div
+                    class="alert mb-8 bg-error-bg text-error-text js-form-error text-start"
+                    role="alert"
+                    hidden
+                  ></div>
+            
+                  {%- form 'product', product, class: 'js-product-form js-product-form-main', id: product_form_id -%}
+                    {%- liquid
+                      assign gift_card_recipient_feature_active = false
+                      if block.settings.show_gift_card_recipient and product.gift_card?
+                        assign gift_card_recipient_feature_active = true
+                      endif
+
+                      assign enable_dynamic_checkout = false
+                      if block.settings.enable_dynamic_checkout and product.selling_plan_groups == empty and gift_card_recipient_feature_active == false
+                        unless product.template_suffix contains 'preorder'
+                          assign enable_dynamic_checkout = true
+                        endunless
+                      endif
+                    -%}
+
+                    {% if gift_card_recipient_feature_active %}
+                      {% render 'gift-card-recipient', section: section %}
+                    {% endif %}
+
+                    <input type="hidden" name="id" value="{{ current_variant.id }}" disabled>
+
+                    {% render 'quantity-input', layout_style: 'combined' %}
+                    {%- if block.settings.show_qty_selector -%}
+                    {%- else -%}
+                      <input type="hidden" name="quantity" value="1">
+                    {%- endif -%}
+                    <!--
+                      <div class="request_qoute_btn">
+                      <a class="card__button btn btn--secondary qoute_btn" href="#">REQUEST QUOTE</a>
+                      </div>
+                    -->
+                    
+                    <div class="product-info__add-to-cart flex{% if enable_dynamic_checkout %} qty-input--secondary-btn{% endif %}">
+                      <div class="product-info__add-button">
+                        {%- capture add_to_cart_text -%}
+                        {%- if product.template_suffix contains 'preorder' -%}
+                          {{- 'products.product.preorder' | t -}}
+                        {%- else -%}
+                          {{- 'products.product.add_to_cart' | t -}}
+                        {%- endif -%}
+                      {%- endcapture -%}
+                      
+            
+                        <button
+                          type="submit"
+                          data-add-to-cart-text="{{ add_to_cart_text | escape }}"
+                          class="btn {% if enable_dynamic_checkout %}btn--secondary{% else %}btn--primary{% endif %} w-full"
+                          name="add"
+                          {% if current_variant.available == false %}
+                            disabled
+                          {% endif %}
+                        >
+                          {%- if current_variant.available -%}
+                            {{- add_to_cart_text -}}
+                          {%- else -%}
+                            {{- 'products.product.sold_out' | t -}}
+                          {%- endif -%}
+                        </button>
+              
+                      </div>
+                    </div>
+
+                    {%- if enable_dynamic_checkout -%}
+                      {{ form | payment_button }}
+                    {%- endif -%}
+                  {%- endform -%}
+                </product-form>
+
+                {%- if block.settings.show_pickup_availability -%}
+                  {% render 'pickup-availability', current_variant: current_variant %}
+                {%- endif -%}
+              </div>
+              <!-- buynow button end -->
+
+            {%- when 'icon_with_text' -%}
+              <div class="icon-desktop-hide">
+                {%- if block.settings.icon_text3 != blank -%}
+                  <div class="shop_media_icon_flex">
+                    <div class="icon_text rte icon_flex">
+                      {%- if block.settings.custom_icon1 != blank -%}
+                        <img
+                          src="{{ block.settings.custom_icon1 | img_url:'master' }}"
+                          class="custom_icon"
+                        >
+                      {%- endif -%}
+
+                      {%- if block.settings.icon_text1 != blank -%}
+                        <p class="custom_icon__text">
+                          {{ block.settings.icon_text1 }}
+                        </p>
+                      {%- endif -%}
+                    </div>
+
+                    <div class="icon_text rte icon_flex">
+                      {%- if block.settings.custom_icon2 != blank -%}
+                        <img
+                          src="{{ block.settings.custom_icon2 | img_url:'master' }}"
+                          class="custom_icon"
+                        >
+                      {%- endif -%}
+
+                      {%- if block.settings.icon_text2 != blank -%}
+                        <p class="custom_icon__text">
+                          {{ block.settings.icon_text2 }}
+                        </p>
+                      {%- endif -%}
+                    </div>
+                    <div class="icon_text rte icon_flex">
+                      {%- if block.settings.custom_icon3 != blank -%}
+                        <img
+                          src="{{ block.settings.custom_icon3 | img_url:'master' }}"
+                          class="custom_icon"
+                        >
+                      {%- endif -%}
+
+                      {%- if block.settings.icon_text3 != blank -%}
+                        <p class="custom_icon__text">
+                          {{ block.settings.icon_text3 }}
+                        </p>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+              </div>
+
+            {%- when 'title' -%}
+              <div
+                class="product-info__block product-info__block--sm product-info__title"
+                {{ block.shopify_attributes }}
+              >
+                <h1 class="product-title h5">{{ product.title | escape }}</h1>
+              </div>
+
+            {%- when 'price' -%}
+              <div class="product-info__block product-info__block--sm product-price" {{ block.shopify_attributes }}>
+                <div class="product-info__price">price {% render 'price', product: product, use_variant: true %}</div>
+
+                {%- if block.settings.show_tax_and_shipping -%}
+                  {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+                    <div class="product-policies text-sm rte">
+                      {%- if cart.taxes_included -%}
+                        {{ 'products.product.include_taxes' | t }}
+                      {%- endif -%}
+                      {%- if shop.shipping_policy.body != blank -%}
+                        {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- assign instalments_form_id = 'instalments-form-' | append: section.id -%}
+                {%- form 'product', product, class: 'js-instalments-form  text-sm mt-2', id: instalments_form_id -%}
+                  <input type="hidden" name="id" value="{{ current_variant.id }}">
+                  {{ form | payment_terms }}
+                {%- endform -%}
+              </div>
+
+            {%- when 'rating' -%}
+              {%- if product.metafields.reviews.rating.value != blank -%}
+                <div
+                  class="product-info__block product-info__block--sm product-info__rating"
+                  {{ block.shopify_attributes }}
+                >
+                  {% render 'rating',
+                    rating_value: product.metafields.reviews.rating.value,
+                    rating_count: product.metafields.reviews.rating_count
+                  %}
+                </div>
+              {%- endif -%}
+
+            {%- when 'variant-picker' -%}
+              {%- unless product.has_only_default_variant -%}
+                {%- assign has_variant_picker = true -%}
+                {%- if section.settings.sticky_atc_panel and product.available -%}
+                  <a class="product-options--anchor" id="variants" rel="nofollow"></a>
+                {%- endif -%}
+                <div class="product-info__block product-options" {{ block.shopify_attributes }}>
+                  {% render 'variant-picker',
+                    product: product,
+                    product_form_id: product_form_id,
+                    block: block,
+                    media_ratio: media_ratio,
+                    swatch_crop: section.settings.media_crop
+                  %}
+                </div>
+              {%- endunless -%}
+
+              {%- if block.settings.show_backorder_text -%}
+                <div class="product-info__block product-backorder">
+                  {% render 'backorder', product: product, variant: current_variant %}
+                </div>
+              {%- endif -%}
+            {%- when 'inventory-msg' -%}
+              <div class="inventory-msg">
+                {% if product.metafields.custom.product_source.value contains 'Fast Source'
+                  and product.metafields.custom.buy_now_or_get_quote_button.value == 'Buy Now'
+                %}
+                  <div class="fast_source">
+                    <p class="fast_text"><b>Fast Source:</b></p>
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="instock_msg">Ships Immediately</p>
+                    {% else %}
+                      <p class="outstock_msg">Ships 2-3 Days</p>
+                    {% endif %}
+                  </div>
+                {% elsif product.metafields.custom.product_source.value contains 'Slow Source'
+                  and product.metafields.custom.buy_now_or_get_quote_button.value == 'Buy Now'
+                %}
+                  <div class="fast_source">
+                    <p class="fast_text"><b>Slow Source:</b></p>
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="instock_msg">Ships Immediately</p>
+                    {% else %}
+                      <p class="outstock_msg">Lead Times Vary</p>
+                    {% endif %}
+                  </div>
+                {% elsif product.metafields.custom.product_source.value contains 'No Source'
+                  and product.metafields.custom.buy_now_or_get_quote_button.value == 'Buy Now'
+                %}
+                  <div class="fast_source">
+                    <p class="fast_text"><b>No Source:</b></p>
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="instock_msg">Ships Immediately</p>
+                    {% else %}
+                      <p class="outstock_msg">Out of Stock</p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                <!-- Quote button conditons -->
+                {% if product.metafields.custom.product_source.value contains 'Fast Source'
+                  and product.metafields.custom.buy_now_or_get_quote_button.value == 'Get Quote'
+                %}
+                  <div class="fast_source">
+                    <p class="fast_text"><b>Fast Source:</b></p>
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="instock_msg">Ships Immediately</p>
+                    {% else %}
+                      <p class="outstock_msg">Ships</p>
+                    {% endif %}
+                  </div>
+                {% elsif product.metafields.custom.product_source.value contains 'Slow Source'
+                  and product.metafields.custom.buy_now_or_get_quote_button.value == 'Get Quote'
+                %}
+                  <div class="fast_source">
+                    <p class="fast_text"><b>Slow Source:</b></p>
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="instock_msg">Ships Immediately</p>
+                    {% else %}
+                      <p class="outstock_msg"></p>
+                    {% endif %}
+                  </div>
+                {% elsif product.metafields.custom.product_source.value contains 'No Source'
+                  and product.metafields.custom.buy_now_or_get_quote_button.value == 'Get Quote'
+                %}
+                  <div class="fast_source">
+                    <p class="fast_text"><b>No Source:</b></p>
+                    {% if product.variants.first.inventory_quantity > 0 %}
+                      <p class="instock_msg">Ships Immediately</p>
+                    {% else %}
+                      <p class="outstock_msg">Out of Stock</p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            {%- when 'inventory-status' -%}
+              {%- if current_variant.inventory_management != blank -%}
+                {% render 'product-inventory', product: product, current_variant: current_variant, block: block %}
+              {%- endif -%}
+
+            {%- when 'buy-buttons' -%}
+              <div class="product-info__block buy_atc" {{ block.shopify_attributes }}>
+                <product-form>
+                  <div
+                    class="alert mb-8 bg-error-bg text-error-text js-form-error text-start"
+                    role="alert"
+                    hidden
+                  ></div>
+                  {%- form 'product', product, class: 'js-product-form js-product-form-main', id: product_form_id -%}
+                    {%- liquid
+                      assign gift_card_recipient_feature_active = false
+                      if block.settings.show_gift_card_recipient and product.gift_card?
+                        assign gift_card_recipient_feature_active = true
+                      endif
+
+                      assign enable_dynamic_checkout = false
+                      if block.settings.enable_dynamic_checkout and product.selling_plan_groups == empty and gift_card_recipient_feature_active == false
+                        unless product.template_suffix contains 'preorder'
+                          assign enable_dynamic_checkout = true
+                        endunless
+                      endif
+                    -%}
+
+                    {% if gift_card_recipient_feature_active %}
+                      {% render 'gift-card-recipient', section: section %}
+                    {% endif %}
+
+                    <input type="hidden" name="id" value="{{ current_variant.id }}" disabled>
+                    {%- if block.settings.show_qty_selector -%}
+                      {% render 'quantity-input', layout_style: 'combined' %}
+                    {%- else -%}
+                      <input type="hidden" name="quantity" value="1">
+                    {%- endif -%}
+                    <!--
+                      <div class="request_qoute_btn">
+                      <a class="card__button btn btn--secondary qoute_btn" href="#">REQUEST QUOTE</a>
+                      </div>
+                    -->
+                    <div class="product-info__add-to-cart flex{% if enable_dynamic_checkout %} qty-input--secondary-btn{% endif %}">
+                      <div class="product-info__add-button">
+                        {%- capture add_to_cart_text -%}
+                        {%- if product.template_suffix contains 'preorder' -%}
+                          {{- 'products.product.preorder' | t -}}
+                        {%- else -%}
+                          {{- 'products.product.add_to_cart' | t -}}
+                        {%- endif -%}
+                      {%- endcapture -%}
+
+                        <button
+                          type="submit"
+                          data-add-to-cart-text="{{ add_to_cart_text | escape }}"
+                          class="btn {% if enable_dynamic_checkout %}btn--secondary{% else %}btn--primary{% endif %} w-full"
+                          name="add"
+                          {% if current_variant.available == false %}
+                            disabled
+                          {% endif %}
+                        >
+                          {%- if current_variant.available -%}
+                            {{- add_to_cart_text -}}
+                          {%- else -%}
+                            {{- 'products.product.sold_out' | t -}}
+                          {%- endif -%}
+                        </button>
+                      </div>
+                    </div>
+
+                    {%- if enable_dynamic_checkout -%}
+                      {{ form | payment_button }}
+                    {%- endif -%}
+                  {%- endform -%}
+                </product-form>
+
+                {%- if block.settings.show_pickup_availability -%}
+                  {% render 'pickup-availability', current_variant: current_variant %}
+                {%- endif -%}
+              </div>
+
+            {%- when 'complementary' -%}
+              <div class="product-info__block" {{ block.shopify_attributes }}>
+                {%- liquid
+                  if block.settings.layout == 'carousel'
+                    assign grid_classes = 'grid grid-flow-col auto-cols-1 gap-x-theme'
+                  endif
+                -%}
+                {%- render 'recommendations',
+                  intent: 'complementary',
+                  products_to_show: block.settings.products_to_show,
+                  heading: block.settings.heading,
+                  layout: block.settings.layout,
+                  grid_classes: grid_classes
+                -%}
+              </div>
+
+            {%- when 'collapsible-content' -%}
+              <details-disclosure {{ block.shopify_attributes }}>
+                <details
+                  class="disclosure disclosure--row"
+                  {% if block.settings.open %}
+                    open
+                  {% endif %}
+                >
+                  <summary>
+                    <div class="flex justify-between items-center">
+                      <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0">
+                        {%- if block.settings.icon != 'none' -%}
+                          {% render 'icon', icon: block.settings.icon, width: 22, height: 22 %}
+                        {%- endif -%}
+                        {{- block.settings.heading | default: block.settings.page.title -}}
+                      </h2>
+                      <span class="disclosure__toggle">
+                        {%- if settings.disclosure_toggle == 'plus' -%}
+                          {% render 'icon-plus' %}
+                        {%- else -%}
+                          {% render 'icon-chevron-down' %}
+                        {%- endif -%}
+                      </span>
+                    </div>
+                  </summary>
+                  <div class="disclosure__panel has-motion">
+                    <div class="disclosure__content rte">
+                      {{ block.settings.text }}
+                      {{ block.settings.page.content }}
+                    </div>
+                  </div>
+                </details>
+              </details-disclosure>
+
+            {%- when 'product-signup' -%}
+              {%- liquid
+                assign show_block = true
+                if block.settings.unavailable_only and product.available == true
+                  assign show_block = false
+                endif
+              -%}
+              {%- if show_block -%}
+                <div class="product-info__block product-signup" {{ block.shopify_attributes }}>
+                  {%- if block.settings.heading != blank -%}
+                    <p class="h6">{{ block.settings.heading | escape }}</p>
+                  {%- endif -%}
+
+                  {%- if block.settings.text != blank -%}
+                    <div class="rte mb-4">{{ block.settings.text }}</div>
+                  {%- endif -%}
+
+                  {%- assign id = 'product-signup' -%}
+                  {%- form 'contact', id: id, class: 'form' -%}
+                    <input type="hidden" name="return_to" value="{{ product.url }}?contact_posted=true">
+                    <input
+                      type="hidden"
+                      name="contact[Message]"
+                      value="Customer has completed the product signup form."
+                    >
+                    <input type="hidden" name="contact[Product ID]" value="{{ product.id }}">
+                    <input type="hidden" name="contact[Product URL]" value="{{ shop.url }}{{ product.url }}">
+                    <input type="hidden" name="contact[Product Title]" value="{{ product.title | escape }}">
+
+                    <div class="form__field">
+                      <label class="label visually-hidden" for="{{ id }}">{{- 'product_signup.label' | t -}}</label>
+                      <div class="input-with-button">
+                        <input
+                          type="email"
+                          class="input w-full focus-inset"
+                          id="{{ id }}"
+                          name="contact[email]"
+                          value="{{ form.email }}"
+                          placeholder="{{ 'product_signup.placeholder' | t }}"
+                          autocomplete="email"
+                          {%- if form.posted_successfully? %}
+                            aria-describedby="{{ id }}-success"
+                          {%- elsif form.errors %}
+                            aria-invalid="true"
+                            aria-describedby="{{ id }}-error"
+                            autofocus
+                          {%- endif %}
+                          aria-required="true"
+                          required
+                        >
+                        <button class="btn focus-inset has-ltr-icon">
+                          <span class="visually-hidden">{{- 'product_signup.button_label' | t -}}</span>
+                          {% render 'icon-arrow-right' %}
+                        </button>
+                      </div>
+
+                      {%- if form.errors -%}
+                        <p class="form__field-error" id="{{ id }}-error">
+                          {{ form.errors.translated_fields.email | capitalize }}
+                          {{ form.errors.messages.email }}
+                        </p>
+                      {%- endif -%}
+                    </div>
+
+                    {%- if form.posted_successfully? -%}
+                      <div class="alert bg-success-bg text-success-text" id="{{ id }}-success" tabindex="-1" autofocus>
+                        {{ 'product_signup.success' | t }}
+                      </div>
+                    {%- endif -%}
+                  {%- endform -%}
+                </div>
+
+                {% if block.settings.divider %}
+                  <hr class="mt-8 mb-8">
+                {% endif %}
+              {%- endif -%}
+
+            {%- when 'newsletter-signup' -%}
+              <div class="product-info__block" {{ block.shopify_attributes }}>
+                {%- if block.settings.heading != blank -%}
+                  <p class="h6">{{ block.settings.heading | escape }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.text != blank -%}
+                  <div class="rte mb-4">{{ block.settings.text }}</div>
+                {%- endif -%}
+
+                {% render 'newsletter-signup',
+                  id: 'product-newsletter-signup',
+                  tags: 'product page',
+                  arrow_button: true
+                %}
+              </div>
+
+            {%- when 'share' -%}
+              <div class="product-info__block" {{ block.shopify_attributes }}>
+                <div class="social-share flex items-center">
+                  <p class="social-share__heading mb-0 font-bold">{{ 'general.social.share_heading' | t }}:</p>
+                  {% render 'social-share', share_title: product.title, share_url: product.url, share_image: product %}
+                </div>
+              </div>
+
+            {%- when 'richtext' -%}
+              {%- if block.settings.text != blank -%}
+                <div class="product-info__block rte" {{ block.shopify_attributes }}>
+                  {{ block.settings.text }}
+                </div>
+              {%- endif -%}
+
+            {%- when 'image' -%}
+              <div class="product-info__block" {{ block.shopify_attributes }}>
+                {%- if block.settings.title -%}
+                  <p class="h4">{{ block.settings.title }}</p>
+                {%- endif -%}
+
+                <div class="flex {{ block.settings.image_align }}">
+                  <div class="media relative" style="width: {{ block.settings.image_width }}px;">
+                    {%- if block.settings.image != blank -%}
+                      {%- if block.settings.url != blank -%}
+                        <a href="{{ block.settings.url }}">
+                      {%- endif -%}
+                      {% render 'image',
+                        image: block.settings.image,
+                        src_width: block.settings.image_width,
+                        quality: 1,
+                        srcset_2x: true
+                      %}
+                      {%- if block.settings.url != blank -%}
+                        </a>
+                      {%- endif -%}
+                    {%- else -%}
+                      {{ 'image' | placeholder_svg_tag: 'media__placeholder' }}
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+
+            {%- when 'pop-up' -%}
+              <div class="product-info__block" {{ block.shopify_attributes }}>
+                <modal-opener class="no-js-hidden" data-modal="modal-{{ block.id }}">
+                  <button type="button" class="{{ block.settings.link_style }}" aria-haspopup="dialog">
+                    {{- block.settings.link_text -}}
+                  </button>
+                </modal-opener>
+                <a href="{{ block.settings.page.url }}" class="link js-hidden">{{ block.settings.link_text }}</a>
+              </div>
+
+            {%- when 'custom-liquid' -%}
+              <div class="product-info__block" {{ block.shopify_attributes }}>
+                {{ block.settings.custom_liquid }}
+              </div>
+
+            {%- when 'divider' -%}
+              <hr
+                class="{{ block.settings.spacing }}{% unless block.settings.show_line %} invisible{% endunless %}"
+                {{ block.shopify_attributes }}
+              >
+
+            {%- when 'message' -%}
+              {%- if block.settings.title != blank and block.settings.show_over_media == false -%}
+                <product-message
+                  class="product-message product-message--info product-message--out has-motion relative"
+                  style="--bg-color: {{ block.settings.bg_color }};--text-color: {{ block.settings.text_color }};"
+                  {{ block.shopify_attributes }}
+                  {% if block.settings.close == 'persistent' %}
+                    data-persistent-close="true"
+                  {% endif %}
+                  data-block-id="{{ block.id }}"
+                >
+                  <div class="product-message__inner">
+                    {%- if block.settings.icon != 'none' -%}
+                      {% render 'icon', icon: block.settings.icon, width: 32, height: 32 %}
+                    {%- endif -%}
+
+                    <div class="rte rte--inherit-heading-color">{{ block.settings.title }}</div>
+
+                    {%- if block.settings.close != 'none' -%}
+                      <button type="button" class="product-message__close tap-target text-current js-close-message">
+                        <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+                        {% render 'icon-close' %}
+                      </button>
+                    {%- endif -%}
+                  </div>
+                </product-message>
+              {%- endif -%}
+
+            {%- when 'description' -%}
+              {%- if block.settings.show_as_collapsible_content -%}
+                <details-disclosure {{ block.shopify_attributes }}>
+                  <details
+                    class="disclosure disclosure--row"
+                    {% if block.settings.open %}
+                      open
+                    {% endif %}
+                  >
+                    <summary>
+                      <div class="flex justify-between items-center">
+                        <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0">
+                          {%- if block.settings.icon != 'none' -%}
+                            {% render 'icon', icon: block.settings.icon, width: 22, height: 22 %}
+                          {%- endif -%}
+                          {{ 'products.product.description' | t }}
+                        </h2>
+                        <span class="disclosure__toggle">
+                          {%- if settings.disclosure_toggle == 'plus' -%}
+                            {% render 'icon-plus' %}
+                          {%- else -%}
+                            {% render 'icon-chevron-down' %}
+                          {%- endif -%}
+                        </span>
+                      </div>
+                    </summary>
+                    <div class="disclosure__panel has-motion">
+                      <div class="disclosure__content rte">
+                        {{ product.description }}
+                      </div>
+                    </div>
+                  </details>
+                </details-disclosure>
+              {%- else -%}
+                <div
+                  class="product-info__block product-info__block--sm rte product-description"
+                  {{ block.shopify_attributes }}
+                >
+                  {{ product.description }}
+                </div>
+              {%- endif -%}
+
+            {%- when 'product-labels' -%}
+              {%- capture variant_labels -%}
+              {%- for variant in product.variants -%}
+                {%- liquid
+                  assign variant_label = blank
+                  capture variant_label
+                    render 'product-label', product: product, variant: variant, is_product_card: false, limit: 99
+                  endcapture
+                -%}
+                {%- if variant_label != blank -%}
+                  <div class="variant-label js-variant-label" hidden data-variant-id="{{ variant.id }}">
+                    {{ variant_label }}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endcapture -%}
+
+              {%- if variant_labels != blank -%}
+                <variant-label
+                  class="block product-info__block product-info__block--sm"
+                  data-current-variant-id="{{ current_variant.id }}"
+                >
+                  {{ variant_labels }}
+                </variant-label>
+                <script src="{{ 'variant-label.js' | asset_url }}" defer="defer"></script>
+              {%- endif -%}
+          {%- endcase -%}
+        {%- endfor -%}
+
+        {%- if section.settings.stick_on_scroll -%}
+          </div>
+          </sticky-scroll-direction>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- render 'product-popups' -%}
+
+{%- if section.settings.sticky_atc_panel and product.available -%}
+  <link rel="stylesheet" href="{{ 'sticky-atc-panel.css' | asset_url }}" media="print" onload="this.media='all'">
+  <script src="{{ 'sticky-atc-panel.js' | asset_url }}" defer="defer"></script>
+
+  <sticky-atc-panel class="sticky-atc-panel sticky-atc-panel--out fixed bottom-0 {{ section.settings.sticky_atc_position }} invisible{% if section.settings.sticky_atc_mobile == false %} hidden md:block{% endif %}">
+    <div class="card card--row card--related card--sticky-atc relative flex items-center">
+      {%- if product.featured_media -%}
+        <div class="card__media{% if settings.blend_product_images %} image-blend{% endif %}">
+          {%- liquid
+            assign image_width = 44
+            if product.featured_media.preview_image.aspect_ratio >= 1
+              assign image_width = 56
+            endif
+          -%}
+          {% render 'image', image: product.featured_media.preview_image, src_width: image_width, srcset_2x: true %}
+        </div>
+      {%- endif -%}
+
+      <div class="card__info">
+        <p class="sticky-atc-panel__heading h6 regular-text text-current">
+          {{ product.title | escape | truncate: 70 }}
+        </p>
+
+        {%- render 'price', product: product -%}
+      </div>
+
+      <div class="card__buttons">
+        {%- liquid
+          if has_variant_picker
+            assign anchor = 'variants'
+          else
+            assign anchor = 'product-info'
+          endif
+        -%}
+        {%- if product.has_only_default_variant -%}
+          <a href="#{{ anchor }}" rel="nofollow" class="btn btn--secondary btn--sm">
+            {{- 'products.product.view_details' | t -}}
+          </a>
+        {%- else -%}
+          <a class="btn btn--secondary btn--sm" href="#{{ anchor }}" rel="nofollow">
+            {{- 'products.product.choose_options' | t -}}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </sticky-atc-panel>
+{%- endif -%}
+
+{%- if first_3d_model -%}
+  <script type="application/json" id="product-json-{{ product.id }}">
+    {{ product.media | where: 'media_type', 'model' | json }}
+  </script>
+{%- endif -%}
+
+{% render 'structured-data-product', product: product, current_variant: current_variant %}
+
+{% schema %}
+{
+  "name": "Product",
+  "class": "cc-main-product product-main custom_product_main",
+    "settings": [
+      {
+          "type": "text",
+          "id": "part_number",
+          "label": "Part Number",
+         "default": "Part Number: 123456"
+        },
+      {
+      "type":"header",
+      "content":"Shipping msg"
+    },
+     {
+          "type": "image_picker",
+          "id": "iconlist-img12",
+          "label": "icon Image"
+        },
+        {
+          "type": "text",
+          "id": "iconlist-title12",
+          "label": "icon Text",
+          "default": "Need a Part as Soon as Possible?"
+        },
+    {
+      "type":"text",
+      "id":"iconlist-text12",
+      "label":"text",
+      "default":"We offer rush shipping options not seen anywhere else. Our pump experts will get you up and running in no time at all"
+    },
+            {
+          "type": "text",
+          "id": "iconlist-link-label12",
+          "label": "icon link label",
+          "default": "Give Us a Call: (844) 800-7867"
+        },
+            {
+          "type": "url",
+          "id": "iconlist-link12",
+          "label": "icon link url",
+        },
+    {
+      "type":"header",
+      "content":"custom icon list"
+    },
+    {
+          "type": "image_picker",
+          "id": "iconlist-img1",
+          "label": "icon Image 1"
+        },
+        {
+          "type": "text",
+          "id": "iconlist-title1",
+          "label": "icon Text 1",
+          "default": "Title1"
+        },
+            {
+          "type": "text",
+          "id": "iconlist-link-label1",
+          "label": "icon link label 1",
+          "default": "learn more"
+        },
+            {
+          "type": "url",
+          "id": "iconlist-link1",
+          "label": "icon link url 1",
+        },
+    {
+          "type": "image_picker",
+          "id": "iconlist-img2",
+          "label": "icon Image 2"
+        },
+        {
+          "type": "text",
+          "id": "iconlist-title2",
+          "label": "icon Text 2",
+          "default": "Title 2"
+        },
+            {
+          "type": "text",
+          "id": "iconlist-link-label2",
+          "label": "icon link label 2",
+          "default": "learn more"
+        },
+            {
+          "type": "url",
+          "id": "iconlist-link2",
+          "label": "icon link url 2",
+        },
+    {
+          "type": "image_picker",
+          "id": "iconlist-img3",
+          "label": "icon Image 3"
+        },
+        {
+          "type": "text",
+          "id": "iconlist-title3",
+          "label": "icon Text 3",
+          "default": "Title 3"
+        },
+            {
+          "type": "text",
+          "id": "iconlist-link-label3",
+          "label": "icon link label 3",
+          "default": "learn more"
+        },
+            {
+          "type": "url",
+          "id": "iconlist-link3",
+          "label": "icon link url 3",
+        },
+    {
+      "type": "checkbox",
+      "id": "stick_on_scroll",
+      "label": "Stick product info on scroll",
+      "info": "Applies to large screens only.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Sticky 'Add to cart' prompt"
+    },
+    {
+      "type": "paragraph",
+      "content": "Shows a small prompt to scroll the page back to the product form."
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_atc_panel",
+      "label": "Enable sticky 'Add to cart' prompt",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "sticky_atc_position",
+      "label": "Position on large screens",
+      "options": [
+        {
+          "value": "start",
+          "label": "Left"
+        },
+        {
+          "value": "sticky-atc-panel--center",
+          "label": "Center"
+        },
+        {
+          "value": "end",
+          "label": "Right"
+        }
+      ],
+      "default": "end"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_atc_mobile",
+      "label": "Show on mobile",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "paragraph",
+      "content": "Learn more about [media types](https://help.shopify.com/en/manual/products/product-media)"
+    },
+    {
+      "type": "select",
+      "id": "media_layout",
+      "label": "Layout on large screens",
+      "info": "Stacked works best when all the product images are the same size. Mobile will always display a slider.",
+      "options": [
+        {
+          "value": "stacked",
+          "label": "Stacked"
+        },
+        {
+          "value": "slider",
+          "label": "Slider"
+        }
+      ],
+      "default": "slider"
+    },
+    {
+      "type": "select",
+      "id": "media_size",
+      "label": "Media width",
+      "info": "Media will be full width on mobile.",
+      "options": [
+        {
+          "value": "default",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "media_ratio",
+      "label": "Media aspect ratio",
+      "info": "Natural should only be used when images are the same dimensions.",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "1.33",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "1.77",
+          "label": "Landscape (16:9)"
+        },
+        {
+          "value": "1",
+          "label": "Square"
+        },
+        {
+          "value": "0.75",
+          "label": "Portrait"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "media_crop",
+      "label": "Media crop",
+      "info": "Only applies if the \"Media Shape\" is not \"Natural\".",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "hover_zoom",
+      "label": "Zoom on hover",
+      "info": "Only applies on large screens and when the original image is large enough.",
+      "default": "large",
+      "options": [
+        {
+          "value": "off",
+          "label": "Off"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "original",
+          "label": "Original image"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "label": "Enable video looping",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Stacked Layout"
+    },
+    {
+      "type": "radio",
+      "id": "stacked_scroll",
+      "label": "Scroll to variant media",
+      "options": [
+        {
+          "value": "never",
+          "label": "Never"
+        },
+        {
+          "value": "change",
+          "label": "When the variant is changed"
+        },
+        {
+          "value": "always",
+          "label": "When the variant is changed or the page loads"
+        }
+      ],
+      "default": "always"
+    },
+    {
+      "type": "checkbox",
+      "id": "underline_active",
+      "label": "Underline active media",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Slider Layout"
+    },
+    {
+      "type": "select",
+      "id": "media_thumbs",
+      "label": "Show thumbnails",
+      "options": [
+        {
+          "value": "never",
+          "label": "Never"
+        },
+        {
+          "value": "desktop",
+          "label": "Large screens only"
+        },
+        {
+          "value": "always",
+          "label": "Always"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "select",
+      "id": "thumb_ratio",
+      "label": "Thumbnail shape",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "1.33",
+          "label": "Landscape"
+        },
+        {
+          "value": "1",
+          "label": "Square"
+        },
+        {
+          "value": "0.75",
+          "label": "Portrait"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "thumb_crop",
+      "info": "Only applies if the \"Thumbnail shape\" is not \"Natural\"",
+      "label": "Thumb crop",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "media_arrows",
+      "label": "Show arrows",
+      "options": [
+        {
+          "value": "never",
+          "label": "Never"
+        },
+        {
+          "value": "mobile",
+          "label": "Mobile only"
+        },
+        {
+          "value": "desktop",
+          "label": "Large screens only"
+        },
+        {
+          "value": "always",
+          "label": "Always"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_slide_count",
+      "label": "Show slide count",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Media border",
+      "info": "Set to transparent to remove",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Media background",
+      "info": "When using 'Blend product images' (Theme Settings > Colors > Color blending), the color specified there will override this.",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "header",
+      "content": "Multiple variant images"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_media_grouping",
+      "label": "Show media only associated with the selected variant",
+      "info": "Other variants' media will be hidden",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "media_grouping_option",
+      "label": "Variant option label",
+      "info": "The label used to switch between images",
+      "default": "Color,Colour,Couleur,Farbe"
+    },
+    {
+      "type": "paragraph",
+      "content": "If your store displays multiple languages, include all translations separated by a comma, e.g. Color,Couleur,Farbe"
+    },
+    {
+      "type": "paragraph",
+      "content": "Arrange product media by this option (all 'red' media together, then all 'blue' media together, for example). The first media in each group should be assigned to a variant. [Read more](https://cleancanvas.co.uk/support/enterprise/settings/grouped-variant-images)"
+    },
+    {
+      "type":"header",
+      "content":"Tabs Buttons"
+    },
+    {
+      "type":"text",
+      "id":"tab_btn",
+      "label":"Tab 1",
+      "default":"Warranty Information"
+    },
+    {
+      "type":"image_picker",
+      "id":"tabs_btn_icon",
+      "label":"Tab 1 Icon"
+    },
+  {
+      "type":"text",
+      "id":"tab_btn2",
+      "label":"Tab 2",
+      "default":"Build-to-Order"
+    },
+    {
+      "type":"image_picker",
+      "id":"tabs_btn_icon2",
+      "label":"Tab 2 Icon"
+    },
+  {
+      "type":"text",
+      "id":"tab_btn3",
+      "label":"Tab 3",
+      "default":"Condition Grading"
+    },
+    {
+      "type":"image_picker",
+      "id":"tabs_btn_icon3",
+      "label":"Tab 3 Icon"
+    },
+          {
+          "type": "header",
+          "content": "Right column form"
+        },
+        {
+            "type": "checkbox",
+          "id": "show_rigth_form",
+          "label": "enable rigth column",
+          "default":false
+        },
+
+         {
+          "type": "text",
+          "id": "form_heading",
+          "label": " form title"
+        },
+          {
+          "type": "text",
+          "id": "form_desc",
+          "label": "form description"
+        },
+    {
+          "type": "image_picker",
+          "id": "peripherals_custom_icon",
+          "label": "peripherals icon Image"
+        },
+         {
+          "type": "text",
+          "id": "peripherals_icon_title",
+          "label": "peripherals icon title",
+          "default": "hare store details, promotions, or brand content with your customers."
+        },
+        {
+          "type": "html",
+          "id": "peripherals_icon_text",
+          "label": "peripherals icon text",
+          "default": "hare store details, promotions, or brand content with your customers."
+        },
+  {
+          "type": "image_picker",
+          "id": "peripherals_custom_icon2",
+          "label": "peripherals icon Image"
+        },
+         {
+          "type": "text",
+          "id": "peripherals_icon_title2",
+          "label": "peripherals icon title",
+          "default": "hare store details, promotions, or brand content with your customers."
+        },
+        {
+          "type": "text",
+          "id": "peripherals_icon_text2",
+          "label": "peripherals icon text",
+          "default": "hare store details, promotions, or brand content with your customers."
+        },
+        {
+          "type": "image_picker",
+          "id": "peripherals_custom_icon3",
+          "label": "peripherals icon Image"
+        },
+         {
+          "type": "text",
+          "id": "peripherals_icon_title3",
+          "label": "peripherals icon title",
+          "default": "hare store details, promotions, or brand content with your customers."
+        },
+        {
+          "type": "text",
+          "id": "peripherals_icon_text3",
+          "label": "peripherals icon text",
+          "default": "hare store details, promotions, or brand content with your customers."
+        }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+      {
+    "type": "warranty-content",
+    "name": "warranty-content",
+    "settings": [
+      {
+        "type": "richtext",
+        "id": "warranty_content_one",
+        "label": "Warranty contect text block one"
+      },
+      {
+      "type":"header",
+      "content":"Icon with text"
+    },
+      {
+      "type":"image_picker",
+      "id":"warranty_content_with_icon",
+      "label":"Icon one"
+    },
+    {
+      "type":"richtext",
+      "id":"warranty_content_box",
+      "label":"text block one",
+      "default":"<p>Warranty Information</p>"
+    },
+       {
+      "type":"image_picker",
+      "id":"warranty_content_with_icon2",
+      "label":"Icon 2"
+    },
+    {
+      "type":"richtext",
+      "id":"warranty_content_box2",
+      "label":"text block 2",
+      "default":"<p>Warranty Information</p>"
+    },
+             {
+      "type":"image_picker",
+      "id":"warranty_content_with_icon3",
+      "label":"Icon 3"
+    },
+    {
+      "type":"richtext",
+      "id":"warranty_content_box3",
+      "label":"text block 3",
+      "default":"<p>Warranty Information</p>"
+    }
+
+    ]
+  },
+    {
+    "type": "Build-to-Order",
+    "name": "Build-to-Order",
+    "settings": [
+          {
+      "type":"header",
+      "content":"Headings"
+    },
+      {
+        "type": "text",
+        "id": "Build_heading",
+        "label": "Heading"
+      },
+       {
+        "type": "text",
+        "id": "Build_subheading",
+        "label": "Sub Heading"
+      },
+       {
+      "type":"richtext",
+      "id":"Build_Content",
+      "label":"text block",
+      "default":"<p>Warranty Information</p>"
+    },
+      {
+      "type":"header",
+      "content":"Icon with text & right Image"
+    },
+       {
+          "type": "image_picker",
+          "id": "custom_icon1",
+          "label": "icon Image 1"
+        },
+        {
+          "type": "text",
+          "id": "icon_text1",
+          "label": "icon Text 1",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon2",
+          "label": "icon Image 2"
+        },
+        {
+          "type": "text",
+          "id": "icon_text2",
+          "label": "icon Text 2",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon3",
+          "label": "icon Image 3"
+        },
+        {
+          "type": "text",
+          "id": "icon_text3",
+          "label": "icon Text 3",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon4",
+          "label": "icon Image 4"
+        },
+        {
+          "type": "text",
+          "id": "icon_text4",
+          "label": "icon Text 4",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon5",
+          "label": "icon Image 5"
+        },
+        {
+          "type": "text",
+          "id": "icon_text5",
+          "label": "icon Text 5",
+          "default": "Shop By Manufacturer"
+        },
+          {
+          "type": "richtext",
+          "id": "Build_to_order_content_box",
+          "label": "text block",
+          "default": "<p>Shop By Manufacturer</p>"
+        },
+      {
+      "type":"image_picker",
+      "id":"build_content_right_img",
+      "label":"Right column Image"
+    }
+
+    ]
+    },
+      {
+    "type": "Condition-Grading",
+    "name": "Condition-Grading",
+    "settings": [
+          {
+      "type":"header",
+      "content":"text container one"
+    },
+      {
+        "type": "richtext",
+        "id": "grading_text_block_1",
+        "label": "container one heading",
+         "default":"<p>Warranty Information</p>"
+      },
+       {
+        "type": "text",
+        "id": "box_heading",
+        "label": "1st container box 1 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text",
+      "label":"1st container box 1 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+      {
+        "type": "text",
+        "id": "box_heading2",
+        "label": "1st container box 2 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text2",
+      "label":"1st container box 2 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+            {
+        "type": "text",
+        "id": "box_heading3",
+        "label": "1st container box 3 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text3",
+      "label":"1st container box 3 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+                {
+      "type":"header",
+      "content":"text container two"
+    },
+      {
+        "type": "richtext",
+        "id": "grading_text_block_2",
+        "label": "container two heading",
+         "default":"<p>Warranty Information</p>"
+      },
+       {
+        "type": "text",
+        "id": "box_heading4",
+        "label": "2nd container box 1 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text4",
+      "label":"2nd container box 1 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+      {
+        "type": "text",
+        "id": "box_heading5",
+        "label": "2nd container box 2 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text5",
+      "label":"2nd container box 2 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+            {
+        "type": "text",
+        "id": "box_heading6",
+        "label": "2nd container box 3 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text6",
+      "label":"2nd container box 3 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+                      {
+      "type":"header",
+      "content":"text container three"
+    },
+      {
+        "type": "richtext",
+        "id": "grading_text_block_3",
+        "label": "container three heading",
+         "default":"<p>Warranty Information</p>"
+      },
+       {
+        "type": "text",
+        "id": "box_heading7",
+        "label": "3rd container box 1 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text7",
+      "label":"3rd container box 1 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+      {
+        "type": "text",
+        "id": "box_heading8",
+        "label": "3rd container box 2 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text8",
+      "label":"3rd container box 2 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+            {
+        "type": "text",
+        "id": "box_heading9",
+        "label": "3rd container box 3 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text9",
+      "label":"3rd container box 3 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+                            {
+      "type":"header",
+      "content":"text container four"
+    },
+      {
+        "type": "richtext",
+        "id": "grading_text_block_4",
+        "label": "container four heading",
+         "default":"<p>Warranty Information</p>"
+      },
+       {
+        "type": "text",
+        "id": "box_heading10",
+        "label": "4th container box 1 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text10",
+      "label":"4th container box 1 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+      {
+        "type": "text",
+        "id": "box_heading11",
+        "label": "4th container box 2 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text11",
+      "label":"4th container box 2 text block",
+      "default":"<p>Warranty Information</p>"
+    },
+            {
+        "type": "text",
+        "id": "box_heading12",
+        "label": "4th container box 3 heading"
+      },
+       {
+      "type":"richtext",
+      "id":"box_text12",
+      "label":"4th container box 3 text block",
+      "default":"<p>Warranty Information</p>"
+    }
+  ]
+ },
+    {
+      "type": "buy-buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_qty_selector",
+          "label": "Show quantity selector",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_dynamic_checkout",
+          "label": "Show dynamic checkout button",
+          "info": "Using the payment methods available on your store, customers see their preferred option, like PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_pickup_availability",
+          "label": "Show pickup availability",
+          "info": "Show customers where they can pick up the product. [Learn more](https://help.shopify.com/en/manual/shipping/setting-up-and-managing-your-shipping/local-methods/local-pickup)",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_gift_card_recipient",
+          "default": false,
+          "label": "Show recipient information form for gift cards",
+          "info": "Allow customers to send gift cards to a recipient along with a personal message. When enabled, the dynamic checkout button will be disabled for gift cards. [Learn more](https://help.shopify.com/manual/online-store/themes/customizing-themes/add-gift-card-recipient-fields)"
+        }
+      ]
+    },
+    {
+      "type": "collapsible-content",
+      "name": "Collapsible content",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "award",
+              "label": "Award"
+            },
+            {
+              "value": "box",
+              "label": "Box"
+            },
+            {
+              "value": "briefcase",
+              "label": "Briefcase"
+            },
+            {
+              "value": "calendar",
+              "label": "Calendar"
+            },
+            {
+              "value": "chat_bubble",
+              "label": "Chat bubble"
+            },
+            {
+              "value": "check_mark",
+              "label": "Check mark"
+            },
+            {
+              "value": "check_mark_in_circle",
+              "label": "Check mark in circle"
+            },
+            {
+              "value": "clock",
+              "label": "Clock"
+            },
+            {
+              "value": "credit_card",
+              "label": "Credit card"
+            },
+            {
+              "value": "dollar_sign",
+              "label": "Dollar sign"
+            },
+            {
+              "value": "dryer",
+              "label": "Dryer"
+            },
+            {
+              "value": "email",
+              "label": "Email"
+            },
+            {
+              "value": "eye",
+              "label": "Eye"
+            },
+            {
+              "value": "feather",
+              "label": "Feather"
+            },
+            {
+              "value": "gift",
+              "label": "Gift"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            },
+            {
+              "value": "iron",
+              "label": "Iron"
+            },
+            {
+              "value": "leaf",
+              "label": "Leaf"
+            },
+            {
+              "value": "leather",
+              "label": "Leather"
+            },
+            {
+              "value": "lock",
+              "label": "Lock"
+            },
+            {
+              "value": "map_pin",
+              "label": "Map pin"
+            },
+            {
+              "value": "pants",
+              "label": "Pants"
+            },
+            {
+              "value": "percent",
+              "label": "Percent"
+            },
+            {
+              "value": "phone",
+              "label": "Phone"
+            },
+            {
+              "value": "plane",
+              "label": "Plane"
+            },
+            {
+              "value": "price_tag",
+              "label": "Price tag"
+            },
+            {
+              "value": "question_mark",
+              "label": "Question mark"
+            },
+            {
+              "value": "return",
+              "label": "Return"
+            },
+            {
+              "value": "ruler",
+              "label": "Ruler"
+            },
+            {
+              "value": "scissors",
+              "label": "Scissors"
+            },
+            {
+              "value": "shirt",
+              "label": "Shirt"
+            },
+            {
+              "value": "shoe",
+              "label": "Shoe"
+            },
+            {
+              "value": "silhouette",
+              "label": "Silhouette"
+            },
+            {
+              "value": "star",
+              "label": "Star"
+            },
+            {
+              "value": "truck",
+              "label": "Truck"
+            },
+            {
+              "value": "washing",
+              "label": "Washing"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Content from page"
+        },
+        {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom Liquid"
+        }
+      ]
+    },
+        {
+      "type": "inventory-msg",
+      "name": "Inventory Message",
+      "settings": [
+      ]
+    },
+      {
+      "type": "info_div",
+      "name": "product Info container",
+      "settings": [
+        {
+          "type": "text",
+          "id": "product_title",
+          "label": "Product title",
+         "default": "G124A Drop-In Replacement Pump"
+        },
+        {
+          "type": "richtext",
+          "id": "product_info",
+          "label": "Product  info",
+         "default": "<p>This pump replaces the Viking® G124A internal gear pump, performance, internal parts and dimensions. It is brand new from factory and comes with a 5-year warranty!</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "check_img",
+          "label": "Grade & Condition Check Icon"
+        },
+        {
+          "type": "text",
+          "id": "grade_title",
+          "label": "Grade Title",
+         "default": "Grade:"
+        },
+        {
+          "type": "text",
+          "id": "grade",
+          "label": "Grade text",
+         "default": "A-Grade (Excellent)"
+        },
+        {
+          "type": "text",
+          "id": "condition_title",
+          "label": "Condition Title",
+         "default": "Condition:"
+        },
+        {
+          "type": "text",
+          "id": "condition",
+          "label": "condition text",
+         "default": "New Surplus"
+        },
+        {
+          "type": "text",
+          "id": "means_btn",
+          "label": "What’s this mean button text",
+         "default": "What’s this mean?"
+        },
+        {
+          "type": "url",
+          "id": "means_btn_link",
+          "label": "What’s this mean button link"
+        },
+                {
+          "type": "select",
+          "id": "selector_style",
+          "label": "Selector style",
+          "info": "Swatches may not show as a dropdown, depending on the settings in Theme Settings > Swatches > Variant pickers.",
+          "options": [
+            {
+              "value": "buttons",
+              "label": "Buttons"
+            },
+            {
+              "value": "dropdown",
+              "label": "Dropdown"
+            }
+          ],
+          "default": "buttons"
+        }
+
+      ]
+    },
+     {
+      "type": "icon_with_text",
+      "name": "icon with text",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "custom_icon1",
+          "label": "icon Image 1"
+        },
+        {
+          "type": "text",
+          "id": "icon_text1",
+          "label": "icon Text 1",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon2",
+          "label": "icon Image 2"
+        },
+        {
+          "type": "text",
+          "id": "icon_text2",
+          "label": "icon Text 2",
+          "default": "Shop By Manufacturer"
+        },
+                {
+          "type": "image_picker",
+          "id": "custom_icon3",
+          "label": "icon Image 3"
+        },
+        {
+          "type": "text",
+          "id": "icon_text3",
+          "label": "icon Text 3",
+          "default": "Shop By Manufacturer"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_line",
+          "label": "Show line",
+          "default": true
+        },
+        {
+          "type": "radio",
+          "id": "spacing",
+          "label": "Spacing",
+          "options": [
+            {
+              "value": "mt-8 mb-8",
+              "label": "Default"
+            },
+            {
+              "value": "mt-12 mb-12",
+              "label": "Large"
+            }
+          ],
+          "default": "mt-8 mb-8"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "image_width",
+          "min": 80,
+          "max": 1000,
+          "step": 10,
+          "unit": "px",
+          "label": "Width",
+          "default": 200
+        },
+        {
+          "type": "select",
+          "id": "image_align",
+          "label": "Alignment",
+          "options": [
+            {
+              "value": "justify-start",
+              "label": "Left"
+            },
+            {
+              "value": "justify-center",
+              "label": "Center"
+            },
+            {
+              "value": "justify-end",
+              "label": "Right"
+            }
+          ],
+          "default": "justify-start"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        }
+      ]
+    },
+    {
+      "type": "inventory-status",
+      "name": "Inventory status",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Inventory colors and thresholds can be changed in \"Theme Settings > Product Inventory\"."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_indicator_bar",
+          "label": "Show inventory indicator bar",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Urgency messages"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_urgency_message",
+          "label": "Show urgency message",
+          "default": true
+        },
+        {
+          "type": "richtext",
+          "id": "text_very_low",
+          "label": "Text when inventory is very low",
+          "default": "<p>- Almost gone!</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "text_low",
+          "label": "Text when inventory is low",
+          "default": "<p>- Hurry while stocks last!</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "text_normal",
+          "label": "Text when inventory is normal"
+        },
+        {
+          "type": "richtext",
+          "id": "text_no_stock",
+          "label": "Text when out of stock"
+        },
+        {
+          "type": "richtext",
+          "id": "text_no_stock_backordered",
+          "label": "Text when backordered",
+          "default": "<p>Backordered</p>"
+        }
+      ]
+    },
+    {
+      "type": "product-signup",
+      "name": "Product sign-up",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "You will receive an email every time someone fills in this form."
+        },
+        {
+          "type": "checkbox",
+          "id": "unavailable_only",
+          "label": "Only show when the product is not available",
+          "info": "For example, when all variants have 0 stock. Note, email alerts will NOT be automatically sent to the customer when the product becomes available - you will need to do this.",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Sign up to be the first to know when it's here</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "divider",
+          "label": "Show dividing line below",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "newsletter-signup",
+      "name": "Newsletter sign-up",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Subscribe to our newsletter"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Sign up for exclusive offers.</p>"
+        },
+        {
+          "type": "paragraph",
+          "content": "Customers who subscribe will have an account created for them. [Learn more](https://help.shopify.com/en/manual/customers/manage-customers)"
+        }
+      ]
+    },
+    {
+      "type": "pop-up",
+      "name": "Pop-up",
+      "settings": [
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text",
+          "default": "Pop-up link"
+        },
+        {
+          "type": "select",
+          "id": "link_style",
+          "label": "Link style",
+          "options": [
+            {
+              "value": "link",
+              "label": "Link"
+            },
+            {
+              "value": "btn btn--primary",
+              "label": "Primary button"
+            },
+            {
+              "value": "btn btn--secondary",
+              "label": "Secondary button"
+            }
+          ],
+          "default": "link"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Content"
+        },
+        {
+          "id": "page",
+          "type": "page",
+          "label": "Content from page"
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_tax_and_shipping",
+          "label": "Show tax and shipping information",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "rating",
+      "name": "Product rating",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "To display a rating, add a product rating app. [Learn more](https://help.shopify.com/en/manual/online-store/themes/theme-structure/theme-features#featured-product-rating)"
+        }
+      ]
+    },
+    {
+      "type": "complementary",
+      "name": "Complementary products",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "To select complementary products, add the Search & Discovery app. [Learn more](https://help.shopify.com/manual/online-store/search-and-discovery/product-recommendations)"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Goes well with"
+        },
+        {
+          "type": "range",
+          "id": "products_to_show",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 4,
+          "label": "Maximum products to show",
+          "info": "Out of stock products will not be shown."
+        },
+        {
+          "type": "radio",
+          "id": "layout",
+          "label": "Layout",
+          "options": [
+            {
+              "value": "carousel",
+              "label": "Carousel"
+            },
+            {
+              "value": "list",
+              "label": "List"
+            }
+          ],
+          "default": "carousel"
+        }
+      ]
+    },
+    {
+      "type": "richtext",
+      "name": "Rich text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Rich text"
+        }
+      ]
+    },
+    {
+      "type": "share",
+      "name": "Share",
+      "limit": 1
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "variant-picker",
+      "name": "Variant picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "selector_style",
+          "label": "Selector style",
+          "info": "Swatches may not show as a dropdown, depending on the settings in Theme Settings > Swatches > Variant pickers.",
+          "options": [
+            {
+              "value": "buttons",
+              "label": "Buttons"
+            },
+            {
+              "value": "dropdown",
+              "label": "Dropdown"
+            }
+          ],
+          "default": "buttons"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_dynamic_availability",
+          "label": "Show availability in selectors",
+          "default": true,
+          "info": "Availability of variants will be shown in option selectors and update each time one is changed."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_backorder_text",
+          "label": "Show backorder text",
+          "info": "Only shows for products which use Shopify inventory tracking and are available to purchase when out of stock.",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Size chart"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_size_chart",
+          "label": "Enable size chart",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "size_chart_variant",
+          "label": "Option name",
+          "info": "The label to show the link beside.",
+          "default": "Size"
+        },
+        {
+          "type": "page",
+          "id": "size_chart_page",
+          "label": "Page containing the size chart."
+        }
+      ]
+    },
+    {
+      "type": "vendor-sku",
+      "name": "Vendor / SKU",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "label": "Show vendor",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_sku",
+          "label": "Show SKU",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "name": "Flash message",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "award",
+              "label": "Award"
+            },
+            {
+              "value": "box",
+              "label": "Box"
+            },
+            {
+              "value": "briefcase",
+              "label": "Briefcase"
+            },
+            {
+              "value": "calendar",
+              "label": "Calendar"
+            },
+            {
+              "value": "chat_bubble",
+              "label": "Chat bubble"
+            },
+            {
+              "value": "check_mark",
+              "label": "Check mark"
+            },
+            {
+              "value": "check_mark_in_circle",
+              "label": "Check mark in circle"
+            },
+            {
+              "value": "clock",
+              "label": "Clock"
+            },
+            {
+              "value": "credit_card",
+              "label": "Credit card"
+            },
+            {
+              "value": "dollar_sign",
+              "label": "Dollar sign"
+            },
+            {
+              "value": "dryer",
+              "label": "Dryer"
+            },
+            {
+              "value": "email",
+              "label": "Email"
+            },
+            {
+              "value": "eye",
+              "label": "Eye"
+            },
+            {
+              "value": "feather",
+              "label": "Feather"
+            },
+            {
+              "value": "gift",
+              "label": "Gift"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            },
+            {
+              "value": "iron",
+              "label": "Iron"
+            },
+            {
+              "value": "leaf",
+              "label": "Leaf"
+            },
+            {
+              "value": "leather",
+              "label": "Leather"
+            },
+            {
+              "value": "lock",
+              "label": "Lock"
+            },
+            {
+              "value": "map_pin",
+              "label": "Map pin"
+            },
+            {
+              "value": "pants",
+              "label": "Pants"
+            },
+            {
+              "value": "percent",
+              "label": "Percent"
+            },
+            {
+              "value": "phone",
+              "label": "Phone"
+            },
+            {
+              "value": "plane",
+              "label": "Plane"
+            },
+            {
+              "value": "price_tag",
+              "label": "Price tag"
+            },
+            {
+              "value": "question_mark",
+              "label": "Question mark"
+            },
+            {
+              "value": "return",
+              "label": "Return"
+            },
+            {
+              "value": "ruler",
+              "label": "Ruler"
+            },
+            {
+              "value": "scissors",
+              "label": "Scissors"
+            },
+            {
+              "value": "shirt",
+              "label": "Shirt"
+            },
+            {
+              "value": "shoe",
+              "label": "Shoe"
+            },
+            {
+              "value": "silhouette",
+              "label": "Silhouette"
+            },
+            {
+              "value": "star",
+              "label": "Star"
+            },
+            {
+              "value": "truck",
+              "label": "Truck"
+            },
+            {
+              "value": "washing",
+              "label": "Washing"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "richtext",
+          "id": "title",
+          "label": "Message",
+          "default": "<p>Product message</p>",
+          "info": "Use metafields to have different messages per product. [Read more](https://cleancanvas.co.uk/support/enterprise/settings/custom-product-message)"
+        },
+        {
+          "type": "select",
+          "id": "close",
+          "label": "Close button",
+          "options": [
+            {
+              "value": "none",
+              "label": "Not visible"
+            },
+            {
+              "value": "once",
+              "label": "Close this message"
+            },
+            {
+              "value": "persistent",
+              "label": "Close this message forever"
+            }
+          ],
+          "default": "once"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_over_media",
+          "label": "Show over media",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "visibility_duration",
+          "min": 3,
+          "max": 15,
+          "step": 1,
+          "unit": "s",
+          "label": "Seconds to show message",
+          "info": "Only applies when the message shows over media.",
+          "default": 7
+        },
+        {
+          "type": "header",
+          "content": "Style"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background",
+          "default": "#e4edfa"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#1a66d2"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_as_collapsible_content",
+          "label": "Show as collapsible content",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Collapsible content"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "award",
+              "label": "Award"
+            },
+            {
+              "value": "box",
+              "label": "Box"
+            },
+            {
+              "value": "briefcase",
+              "label": "Briefcase"
+            },
+            {
+              "value": "calendar",
+              "label": "Calendar"
+            },
+            {
+              "value": "chat_bubble",
+              "label": "Chat bubble"
+            },
+            {
+              "value": "check_mark",
+              "label": "Check mark"
+            },
+            {
+              "value": "check_mark_in_circle",
+              "label": "Check mark in circle"
+            },
+            {
+              "value": "clock",
+              "label": "Clock"
+            },
+            {
+              "value": "credit_card",
+              "label": "Credit card"
+            },
+            {
+              "value": "dollar_sign",
+              "label": "Dollar sign"
+            },
+            {
+              "value": "dryer",
+              "label": "Dryer"
+            },
+            {
+              "value": "email",
+              "label": "Email"
+            },
+            {
+              "value": "eye",
+              "label": "Eye"
+            },
+            {
+              "value": "feather",
+              "label": "Feather"
+            },
+            {
+              "value": "gift",
+              "label": "Gift"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            },
+            {
+              "value": "iron",
+              "label": "Iron"
+            },
+            {
+              "value": "leaf",
+              "label": "Leaf"
+            },
+            {
+              "value": "leather",
+              "label": "Leather"
+            },
+            {
+              "value": "lock",
+              "label": "Lock"
+            },
+            {
+              "value": "map_pin",
+              "label": "Map pin"
+            },
+            {
+              "value": "pants",
+              "label": "Pants"
+            },
+            {
+              "value": "percent",
+              "label": "Percent"
+            },
+            {
+              "value": "phone",
+              "label": "Phone"
+            },
+            {
+              "value": "plane",
+              "label": "Plane"
+            },
+            {
+              "value": "price_tag",
+              "label": "Price tag"
+            },
+            {
+              "value": "question_mark",
+              "label": "Question mark"
+            },
+            {
+              "value": "return",
+              "label": "Return"
+            },
+            {
+              "value": "ruler",
+              "label": "Ruler"
+            },
+            {
+              "value": "scissors",
+              "label": "Scissors"
+            },
+            {
+              "value": "shirt",
+              "label": "Shirt"
+            },
+            {
+              "value": "shoe",
+              "label": "Shoe"
+            },
+            {
+              "value": "silhouette",
+              "label": "Silhouette"
+            },
+            {
+              "value": "star",
+              "label": "Star"
+            },
+            {
+              "value": "truck",
+              "label": "Truck"
+            },
+            {
+              "value": "washing",
+              "label": "Washing"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "product-labels",
+      "name": "Product labels",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "See settings in \"Theme Settings > Product labels\"."
+        }
+      ]
+    },
+
+
+    {
+      "type": "tabs",
+      "name": "Tabs",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Tabs style",
+          "options": [
+            {
+              "value": "collapsible",
+              "label": "Collapsible content"
+            },
+            {
+              "value": "tabs",
+              "label": "Horizontal tabs"
+            }
+          ],
+          "default": "collapsible"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_description",
+          "label": "Show description tab",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_specification",
+          "label": "Show specifications tab",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_reviews",
+          "label": "Show reviews tab",
+          "info": "Requires the [Shopify Product Reviews app](https://apps.shopify.com/product-reviews?ref=cleancanvas)",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "open_first",
+          "label": "Open first collapsible tab by default",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Specifications tab"
+        },
+        {
+          "type": "paragraph",
+          "content": "Include a list of labels and product metafield keys below, separated by a colon, one per line. E.g. Trim color:custom.trim_color. [Read more](https://cleancanvas.co.uk/support/enterprise/templates/product-page)"
+        },
+        {
+          "type": "textarea",
+          "id": "spec_metafields",
+          "label": "Metafields"
+        },
+        {
+          "type": "checkbox",
+          "id": "spec_right_align",
+          "label": "Right align values",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "spec_show_empty_metafields",
+          "label": "Show empty metafields",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "spec_empty_field_text",
+          "label": "Text to use for empty fields",
+          "default": "-"
+        },
+        {
+          "type": "header",
+          "content": "Custom tabs"
+        },
+        {
+          "type": "paragraph",
+          "content": "Show up to 3 custom tabs by adding a title and content or selecting a page"
+        },
+        {
+          "type": "header",
+          "content": "Tab 1"
+        },
+        {
+          "type": "text",
+          "id": "tab_1_title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_1_text",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "tab_1_page",
+          "label": "Content from page"
+        },
+        {
+          "type": "header",
+          "content": "Tab 2"
+        },
+        {
+          "type": "text",
+          "id": "tab_2_title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_2_text",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "tab_2_page",
+          "label": "Content from page"
+        },
+        {
+          "type": "header",
+          "content": "Tab 3"
+        },
+        {
+          "type": "text",
+          "id": "tab_3_title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_3_text",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "tab_3_page",
+          "label": "Content from page"
+        }
+      ]
+    },
+    {
+      "type": "collapsible-content-v1",
+      "name": "Collapsible content v1",
+      "settings": [
+         {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "TAb Button Text"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "header",
+          "content": "Item Type Heading"
+        },
+        {
+          "type": "text",
+          "id": "Item_type_head",
+          "label": "Item Type Heading",
+          "default": "BILL OF MATERIALS"
+        },
+        {
+          "type": "header",
+          "content": "Items"
+        },
+          {
+          "type": "text",
+          "id": "Item_type1",
+          "label": "Item Type 1",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name1",
+          "label": "Item Name 1",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type2",
+          "label": "Item Type 2",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name2",
+          "label": "Item Name 2",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type3",
+          "label": "Item Type 3",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name3",
+          "label": "Item Name 3",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type4",
+          "label": "Item Type 4",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name4",
+          "label": "Item Name 4",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type5",
+          "label": "Item Type 5",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name5",
+          "label": "Item Name 5",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type6",
+          "label": "Item Type 6",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name6",
+          "label": "Item Name 6",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type7",
+          "label": "Item Type 7",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name7",
+          "label": "Item Name 7",
+          "default": "Cast Iron"
+        },
+          {
+          "type": "text",
+          "id": "Item_type8",
+          "label": "Item Type 8",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name8",
+          "label": "Item Name 8",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type9",
+          "label": "Item Type 9",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name9",
+          "label": "Item Name 9",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type10",
+          "label": "Item Type 10",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name10",
+          "label": "Item Name 10",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type11",
+          "label": "Item Type 11",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name11",
+          "label": "Item Name 11",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type12",
+          "label": "Item Type 12",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name12",
+          "label": "Item Name 12",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type13",
+          "label": "Item Type 13",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name13",
+          "label": "Item Name 13",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type14",
+          "label": "Item Type 14",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name14",
+          "label": "Item Name 14",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type15",
+          "label": "Item Type 15",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name15",
+          "label": "Item Name 15",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type16",
+          "label": "Item Type 16",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name16",
+          "label": "Item Name 16",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type17",
+          "label": "Item Type 17",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name17",
+          "label": "Item Name 17",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type18",
+          "label": "Item Type 18",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name18",
+          "label": "Item Name 18",
+          "default": "Cast Iron"
+        },
+                {
+          "type": "text",
+          "id": "Item_type19",
+          "label": "Item Type 19",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name19",
+          "label": "Item Name 19",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type20",
+          "label": "Item Type 20",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name20",
+          "label": "Item Name 20",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type21",
+          "label": "Item Type 21",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name21",
+          "label": "Item Name 21",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type22",
+          "label": "Item Type 22",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name22",
+          "label": "Item Name 22",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type23",
+          "label": "Item Type 23",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name23",
+          "label": "Item Name 23",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type24",
+          "label": "Item Type 24",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name24",
+          "label": "Item Name 24",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type25",
+          "label": "Item Type 25",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name25",
+          "label": "Item Name 25",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type26",
+          "label": "Item Type 26",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name26",
+          "label": "Item Name 26",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type27",
+          "label": "Item Type 27",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name27",
+          "label": "Item Name 27",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type28",
+          "label": "Item Type 28",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name28",
+          "label": "Item Name 28",
+          "default": "Cast Iron"
+        } ,
+                {
+          "type": "text",
+          "id": "Item_type29",
+          "label": "Item Type 29",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name29",
+          "label": "Item Name 29",
+          "default": "Cast Iron"
+        } ,
+                {
+          "type": "text",
+          "id": "Item_type30",
+          "label": "Item Type 30",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name30",
+          "label": "Item Name 30",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type31",
+          "label": "Item Type 31",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name31",
+          "label": "Item Name 31",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type32",
+          "label": "Item Type 32",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name32",
+          "label": "Item Name 32",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type33",
+          "label": "Item Type 33",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name33",
+          "label": "Item Name 33",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type34",
+          "label": "Item Type 34",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name34",
+          "label": "Item Name 34",
+          "default": "Cast Iron"
+        } ,
+                {
+          "type": "text",
+          "id": "Item_type35",
+          "label": "Item Type 35",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name35",
+          "label": "Item Name 35",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "header",
+          "content": "Second Item Type Heading"
+        },
+        {
+          "type": "text",
+          "id": "Item_type_head2",
+          "label": "Item Type Heading",
+          "default": "PUMP PERFORMANCE"
+        },
+          {
+          "type": "text",
+          "id": "Item_type_second1",
+          "label": "Item Type",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name_second1",
+          "label": "Item Name",
+          "default": "Cast Iron"
+        },
+          {
+          "type": "text",
+          "id": "Item_type_second2",
+          "label": "Item Type",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name_second2",
+          "label": "Item Name",
+          "default": "Cast Iron"
+        },
+          {
+          "type": "text",
+          "id": "Item_type_second3",
+          "label": "Item Type",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name_second3",
+          "label": "Item Name",
+          "default": "Cast Iron"
+        }
+
+      ]
+    },
+       {
+      "type": "product-description",
+      "name": "Product Description",
+         "limit":1,
+      "settings": [
+         {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "TAb Button Text"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "header",
+          "content": "Product Description"
+        }
+
+      ]
+    },
+        {
+      "type": "legal",
+      "name": "legal",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Legal Message"
+        },
+
+        {
+          "type": "checkbox",
+          "id": "legal",
+          "label": "Legal Message Content",
+          "default": false
+        },
+       {
+          "type": "richtext",
+          "id": "legal_message_content",
+          "label": "Legal message heading",
+          "default":"<p>Not a genuine Viking® item. This item is an aftermarket drop-in part-for-part replacement. It is not manufactured by Viking®. Viking® is a registered trademark of Viking Pump, Inc. PumpRack.com is not affiliated with or sponsored by Viking Pump, Inc.</p>"
+        }
+
+
+
+      ]
+    },
+    {
+      "type": "collapsible-content-v2",
+      "name": "Collapsible content-v2",
+      "settings": [
+         {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "TAb Button Text"
+        },
+        {
+          "type": "text",
+          "id": "heading_2",
+          "label": "Heading",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "header",
+          "content": "Item Type Heading"
+        },
+        {
+          "type": "text",
+          "id": "Item_type_head2",
+          "label": "Item Type Heading",
+          "default": "BILL OF MATERIALS"
+        },
+        {
+          "type": "header",
+          "content": "Items"
+        },
+                    {
+          "type": "checkbox",
+          "id": "download_info",
+          "label": "download_info Content",
+          "default": false
+        },
+          {
+          "type": "image_picker",
+          "id": "Item_img",
+          "label": "Item Image"
+        },
+          {
+          "type": "richtext",
+          "id": "Item_type_desc",
+          "label": "Download Text",
+          "default": "<p>Hundreds more internal gear pumps in stock including surplus, used, and aftermarket equipment.</p>"
+        },
+        {
+          "type": "text",
+          "id": "item-btn",
+          "label": "btn",
+            "default":"VIEW ALL STOCK NOW"
+        },
+        {
+          "type": "url",
+          "id": "item-btn-link",
+          "label": "btn link"
+        },
+         {
+          "type": "image_picker",
+          "id": "Item_download_icon",
+          "label": "download book icon"
+        },
+        {
+          "type": "text",
+          "id": "Item_download_btn",
+          "label": "download button text"
+        },
+          {
+          "type": "url",
+          "id": "Item_download_btn_link",
+          "label": "download button url"
+        },
+        {
+          "type": "image_picker",
+          "id": "Item_download_icon2",
+          "label": "download book icon 2"
+        },
+        {
+          "type": "text",
+          "id": "Item_download_btn2",
+          "label": "download button text 2"
+        },
+          {
+          "type": "url",
+          "id": "Item_download_btn_link2",
+          "label": "download button url 2"
+        }
+
+      ]
+    },
+    {
+      "type": "highlight-text",
+      "name": "Highlight text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Highlight title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Text to highlight a key feature of your product</p>"
+        }
+      ]
+    },
+    {
+      "type": "payment-methods",
+      "name": "Payment methods",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Payment & Security"
+        },
+        {
+          "type": "header",
+          "content": "Payment methods"
+        },
+        {
+          "type": "text",
+          "id": "title1",
+          "label": "Title",
+          "default": "Payment methods"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_icons",
+          "label": "Show payment icons",
+          "default": true
+        },
+        {
+          "type": "richtext",
+          "id": "text1",
+          "label": "Text",
+          "default": "<p>Your payment information is processed securely. We do not store credit card details nor have access to your credit card information.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Secondary content"
+        },
+        {
+          "type": "text",
+          "id": "title2",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "richtext",
+          "id": "text2",
+          "label": "Text"
+        }
+      ]
+    }
+
+  ]
+}
+{% endschema %}

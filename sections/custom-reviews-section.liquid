@@ -1,0 +1,96 @@
+<div class="reviews-section-main">
+  <div class="container">
+    <div class="reviews-headings">
+      <h2 class="reviews-title">{{ section.settings.reviews-title }}</h2>
+      <div class="reviews-description">{{ section.settings.reviews-desc }}</div>
+    </div>
+    <div class="review-slider">
+
+      {% for block in section.blocks %}
+      <div class="review-box">
+        <div class="review-body">
+          <div class="quotation-1">
+            <img class="quotation_icon" src="https://cdn.shopify.com/s/files/1/0556/7971/3366/files/quotation_1.svg?v=1700829538" />
+          </div>
+          <div class="author-profile-info">
+        {% if block.settings.author_img !=blank %}
+            <div class="author_image"> <img class="author image" src="{{ block.settings.author_img | img_url:'master' }}" /></div>
+            {% endif %}
+            <div class="author_name">
+              <h3>{{ block.settings.author_name }}</h3>
+              <div class="rating-1">
+                <img class="rating image" src="https://cdn.shopify.com/s/files/1/0556/7971/3366/files/rating_1_04a49b1a-689d-480e-8ebb-af6d937903d8.png" />
+              </div>
+            </div>
+          </div>
+          <div class="if-you-are-looking-f">
+            {{ block.settings.review_body }}
+          </div>
+
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</div>
+
+
+
+{% schema %}
+  {
+    "name": "Reviews Section",
+    "class":"reviews-testimonial-slider cc-featured-collection_v2 slider",
+    "settings": [
+      {
+      "type":"text",
+      "id":"reviews-title",
+      "label":"Review section title",
+      "default":"Customer Review"
+    },
+         {
+      "type":"richtext",
+      "id":"reviews-desc",
+      "label":"Review section description",
+      "default":"<p>Some customer review</p>"
+    }
+      
+    ],
+     "blocks": [
+    {
+      "type": "review",
+      "name": "review",
+      "settings": [
+         {
+      "type":"image_picker",
+      "id":"author_img",
+      "label":"Author Image"
+    },
+         {
+      "type":"text",
+      "id":"author_name",
+      "label":"Author Name",
+      "default":"Diego Morata"
+    },
+         {
+      "type":"richtext",
+      "id":"review_body",
+      "label":"Review body",
+      "default":"<p>Pump Rack offers top-notch pumps and outstanding customer service. Highly recommended!</p>"
+    }
+      ]
+    }
+  ],
+   "presets": [
+  {
+    "name":"Reviews Section"
+  }
+]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

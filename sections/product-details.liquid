@@ -1,0 +1,1680 @@
+{%- assign found_highlight_text = false -%}
+{%- if section.blocks.size > 0 -%}
+  {%- for block in section.blocks -%}
+    {%- if block.settings.show_reviews and block.type == 'tabs' -%}
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          if (document.getElementById('shopify-product-reviews')) {
+            const link = document.createElement('link');
+            link.rel = "stylesheet";
+            link.href = "{{ 'reviews.css' | asset_url }}";
+            document.body.appendChild(link);
+          }
+        }, { once: true });
+      </script>
+    {%- elsif block.type == 'highlight-text' and found_highlight_text == false -%}
+      <link rel="stylesheet" href="{{ 'product-highlights.css' | asset_url }}" media="print" onload="this.media='all'">
+      {%- assign found_highlight_text = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  <div class="container reading-width collabse_flex">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when '@app' -%}
+          <div class="product-details__block" {{ block.shopify_attributes }}>
+            {% render block %}
+          </div>
+
+        {%- when 'collapsible-content' -%}
+          <details-disclosure {{ block.shopify_attributes }}>
+            <details
+              class="spacifications disclosure disclosure--row"
+              {% if block.settings.open %}
+                open
+              {% endif %}
+            >
+              <summary>
+                <div class="flex justify-between items-center tab_collapse">
+                  <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0 tab_btn">
+                    {{- block.settings.heading | default: block.settings.page.title -}}
+                  </h2>
+                </div>
+              </summary>
+              <div class="disclosure__panel has-motion">
+                <div class="disclosure__content rte">
+                  <div class="detail_container">
+                    <div class="detail_inner">
+                      {% if block.settings.Item_type_head != blank %}
+                        <div class="Item_type_head">
+                          {{ block.settings.Item_type_head }}
+                          <div class="orange_line"></div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name1 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type1 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name1 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name2 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type2 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name2 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name3 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type3 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name3 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name4 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type4 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name4 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name5 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type5 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name5 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name6 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type6 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name6 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name7 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type7 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name7 }}</div>
+                        </div>
+                      {% endif %}
+                      <!-- custom -->
+                      {% if block.settings.Item_name8 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type8 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name8 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name9 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type9 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name9 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name10 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type10 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name10 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name11 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type11 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name11 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name12 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type12 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name12 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name13 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type13 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name13 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name14 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type14 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name14 }}</div>
+                        </div>
+                      {% endif %}
+                                            {% if block.settings.Item_name15 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type15 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name15 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name16 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type16 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name16 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name17 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type17 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name17 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name18 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type18 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name18 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name19 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type19 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name19 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name20 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type20 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name20 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name21 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type21 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name21 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name22 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type22 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name22 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name23 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type23 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name23 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name24 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type24 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name24 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name25 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type25 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name25 }}</div>
+                        </div>
+                      {% endif %}
+                                            {% if block.settings.Item_name26 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type26 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name26 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name27 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type27 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name27 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name28 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type28 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name28 }}</div>
+                        </div>
+                      {% endif %}
+
+                                            {% if block.settings.Item_name29 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type29 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name29 }}</div>
+                        </div>
+                      {% endif %}
+
+                                            {% if block.settings.Item_name30 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type30 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name30 }}</div>
+                        </div>
+                      {% endif %}
+
+                                            {% if block.settings.Item_name31 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type31 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name31 }}</div>
+                        </div>
+                      {% endif %}
+                                            {% if block.settings.Item_name32 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type32}}</div>
+                          <div class="Item_name">{{ block.settings.Item_name32 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name33 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type33 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name33 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name34 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type34 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name34 }}</div>
+                        </div>
+                      {% endif %}
+
+                                            {% if block.settings.Item_name35 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type35 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name35 }}</div>
+                        </div>
+                      {% endif %}
+
+                                            {% if block.settings.Item_name30 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type30 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name30 }}</div>
+                        </div>
+                      {% endif %}
+
+                      <!-- end -->
+
+                      {% if block.settings.Item_type_head2 != blank %}
+                        <div class="Item_type_head second">
+                          {{ block.settings.Item_type_head2 }}
+                          <div class="orange_line"></div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name_second1 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type_second1 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name_second1 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name_second2 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type_second2 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name_second2 }}</div>
+                        </div>
+                      {% endif %}
+                      {% if block.settings.Item_name_second3 != blank %}
+                        <div class="deatails_flex">
+                          <div class="Item_type">{{ block.settings.Item_type_second3 }}</div>
+                          <div class="Item_name">{{ block.settings.Item_name_second3 }}</div>
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </details-disclosure>
+        {%- when 'product-description' -%}
+          <details-disclosure {{ block.shopify_attributes }} class="product_desc_tab--{{ forloop.index }}">
+            <details
+              class="spacifications disclosure disclosure--row"
+              {% if block.settings.open %}
+                open
+              {% endif %}
+            >
+              <summary>
+                <div class="flex justify-between items-center tab_collapse">
+                  <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0 tab_btn">
+                    {{- block.settings.heading | default: block.settings.page.title -}}
+                  </h2>
+                </div>
+              </summary>
+              <div class="disclosure__panel has-motion">
+                <div class="disclosure__content rte">
+                  <div class="detail_container">
+                    <div class="detail_inner">
+						{{ product.description }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </details-disclosure>
+
+        {%- when 'collapsible-content-v2' -%}
+          <details-disclosure {{ block.shopify_attributes }}>
+            <details
+              class="spacifications disclosure disclosure--row"
+              {% if block.settings.open %}
+                open
+              {% endif %}
+            >
+              <summary>
+                <div class="flex justify-between items-center tab_collapse">
+                  <h2 class="disclosure__title product-info__disclosure font-body font-bold text-body flex flex-auto items-center mb-0 tab_btn">
+                    {{- block.settings.heading_2 | default: block.settings.page.title -}}
+                  </h2>
+                </div>
+              </summary>
+              <div class="disclosure__panel has-motion">
+                <div class="disclosure__content rte">
+                  <div class="detail_container download">        
+                    <div class="detail_inner">
+                      {% if block.settings.Item_type_head2 != blank %}
+                        <div class="Item_type_head">
+                          {{ block.settings.Item_type_head2 }}
+                          <div class="orange_line"></div>
+                        </div>
+                      {% endif %}
+
+                      {% if block.settings.Item_img != blank %}
+                        <div class="deatails_flex_no">
+                          <div class="Item_img">
+                            <img src="{{ block.settings.Item_img | img_url:'master'}}" class="item_img_inner">
+                          </div>
+                        </div>
+                      {% endif %}
+{% if block.settings.Item_type_desc %}
+                        <div class="deatails_flex_no">
+                          <div class="Item_type_desc">
+                            {{ block.settings.Item_type_desc }}
+                          </div>
+                          {% if block.settings.item-btn != blank %}
+                          <a class="view_btn" href="{{  block.settings.item-btn-link }}">{{  block.settings.item-btn }}</a>
+                          {% endif %}
+                        </div>
+                      {% endif %}
+
+          {% if block.settings.Item_download_btn != blank %}
+                        <div class="deatails_flex"> 
+                          {% if block.settings.Item_download_icon %}
+                          <div class="Item_icon">
+                            <img src="{{ block.settings.Item_download_icon | img_url:'master'}}" class="item_img_inner">
+                          </div>
+                          {% endif %}
+                          <div class="Item_name full-width">
+                            <a class="download_link" href="{{block.settings.Item_download_btn_link}}">
+                              {{ block.settings.Item_download_btn }}
+                            </a>
+                          </div>
+                        </div>
+                      {% endif %}
+
+                      {% if block.settings.Item_download_btn2 != blank  %}
+                        <div class="deatails_flex">
+                          {% if block.settings.Item_download_icon2 %}
+                          <div class="Item_icon">
+                            <img src=" {{ block.settings.Item_download_icon2 | img_url:'master'}}" class="item_img_inner">
+                          </div>
+                          {% endif %}
+                          <div class="Item_name full-width">
+                            <a class="download_link" href=" {{ block.settings.Item_download_btn_link2}}">
+                              {{ block.settings.Item_download_btn2 }}
+                            </a>
+                          </div>
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+      
+                </div>
+              </div>
+            </details>
+          </details-disclosure>
+
+                {%- when 'legal' -%}
+          <details-disclosure {{ block.shopify_attributes }}>
+                     
+                                {%- if block.settings.legal -%}
+                                  {% if product.metafields.custom.manufacturer.value == 'Viking®' %}
+            <div class="legal_msg_container">
+              <div class="legal_inner">
+                {% if block.settings.legal_message_content != blank %}
+                <div class="deatails_flex_no">
+                  <div class="legal_desc">
+                    {{ block.settings.legal_message_content}}
+                  </div>
+                </div>
+            {% endif %}
+
+              </div>
+            </div>
+             {% endif %}
+            {% endif %}
+          </details-disclosure>
+
+        {%- when 'tabs' -%}
+          {%- liquid
+            assign tabs = ''
+            if block.settings.show_description
+              assign tabs = ',0'
+            endif
+            if block.settings.show_specification
+              assign tabs = tabs | append: ',4'
+            endif
+            if block.settings.show_reviews
+              assign tabs = tabs | append: ',5'
+            endif
+            if block.settings.tab_1_title != blank or block.settings.tab_1_page.title != blank
+              assign tabs = tabs | append: ',1'
+            endif
+            if block.settings.tab_2_title != blank or block.settings.tab_2_page.title != blank
+              assign tabs = tabs | append: ',2'
+            endif
+            if block.settings.tab_3_title != blank or block.settings.tab_3_page.title != blank
+              assign tabs = tabs | append: ',3'
+            endif
+            assign tab_indices = tabs | remove_first: ',' | split: ','
+          -%}
+
+          {%- if block.settings.show_specification and block.settings.spec_metafields -%}
+            {%- capture specification -%}
+              {%- assign metafield_array = block.settings.spec_metafields | newline_to_br | strip_newlines | split: '<br />' -%}
+              {%- for key_value in metafield_array -%}
+                {%- liquid
+                  assign parts = key_value | split: ':'
+                  assign label = parts.first | strip | replace: '"', ''
+                  assign metafield_key = parts.last | strip
+                  assign metafield_key_parts = metafield_key | split: "."
+                  assign metafield_namespace_index = metafield_key_parts | size | minus: 2
+                  assign metafield_key = metafield_key_parts | last
+                  assign metafield_namespace = metafield_key_parts[metafield_namespace_index]
+                  assign metafield = product.metafields[metafield_namespace][metafield_key]
+
+                  capture metafield_output
+                    if metafield.type contains "list."
+                      for item in metafield.value
+                        assign metafield_type = metafield.type | replace: "list.", ""
+                        assign comma = ""
+                        if forloop.last == false
+                          assign comma = ", "
+                        endif
+                        render 'render-metafield', metafield: metafield, metafield_type: metafield_type, metafield_value: item, comma: comma
+                        if forloop.last == false and metafield_type == "file_reference"
+                          echo "<div class='mt-2'></div>"
+                        endif
+                      endfor
+                    elsif metafield.value
+                      render 'render-metafield', metafield: metafield, metafield_type: metafield.type, metafield_value: metafield.value
+                    endif
+                  endcapture
+                -%}
+                {%- unless metafield_output contains "Liquid error" -%}
+                  {%- unless metafield_output == blank and block.settings.spec_show_empty_metafields == false -%}
+                    <li class="product-spec__item flex flex-col gap-x-theme md:flex-row pb-4 mb-4 last:pb-0 last:mb-0">
+                      <div class="product-spec__label{% if block.settings.spec_right_align %} product-spec__label--right{% endif %} mb-2 block font-bold">
+                        {{ label }}
+                      </div>
+                      <div class="product-spec__value {% if metafield.type contains "color" %}flex{% else %}block{% endif %}{% if block.settings.spec_right_align %} text-end justify-end grow{% endif %}">
+                        {%- if metafield_output == blank -%}
+                          {{ block.settings.spec_empty_field_text }}
+                        {%- else -%}
+                          {{ metafield_output }}
+                        {%- endif -%}
+                      </div>
+                    </li>
+                  {%- endunless -%}
+                {%- endunless -%}
+              {%- endfor -%}
+            {%- endcapture -%}
+          {%- endif -%}
+
+          {%- assign first_tab_rendered = false -%}
+
+          {%- if tabs.size > 0 -%}
+            <div class="product-details__block" {{ block.shopify_attributes }}>
+              {%- for i in tab_indices -%}
+                {%- liquid
+                  assign prevent_tab_render = false
+
+                  if i == '0'
+                    assign title = 'products.product.description' | t
+                  elsif i == '4' and specification == blank
+                    assign title = 'products.product.specification' | t
+                    assign prevent_tab_render = true
+                  elsif i == '4'
+                    assign title = 'products.product.specification' | t
+                  elsif i == '5' and block.settings.show_reviews
+                    assign reviews_count = product.metafields.spr.reviews | split: '"reviewCount": "' | last | split: '",' | first | plus: 0
+                    assign title = 'products.product.reviews' | t | append: ' (' | append: reviews_count | append: ')'
+                  else
+                    assign title_id = 'tab_' | append: i | append: '_title'
+                    assign text_id = 'tab_' | append: i | append: '_text'
+                    assign page_id = 'tab_' | append: i | append: '_page'
+                    assign title = block.settings[title_id] | default: block.settings[page_id].title
+                  endif
+                -%}
+
+                {%- if block.settings.style == 'collapsible' and prevent_tab_render == false -%}
+                  <details-disclosure>
+                    <details
+                      class="disclosure disclosure--row"
+                      {% if first_tab_rendered == false and block.settings.open_first %}
+                        open
+                      {% endif %}
+                    >
+                      <summary>
+                        <div class="flex justify-between items-center">
+                          <h2 class="disclosure__title h5 mb-0">{{ title }}</h2>
+                          <span class="disclosure__toggle">
+                            {%- if settings.disclosure_toggle == 'plus' -%}
+                              {% render 'icon-plus' %}
+                            {%- else -%}
+                              {% render 'icon-chevron-down' %}
+                            {%- endif -%}
+                          </span>
+                        </div>
+                      </summary>
+                      <div class="disclosure__panel has-motion">
+                        <div class="disclosure__content{% unless i == "4" %} rte product-description{% endunless %}">
+                          {%- if forloop.first and block.settings.show_description -%}
+                            {{ product.description }}
+                          {%- elsif i == '4' and specification != blank -%}
+                            <ul class="product-spec">
+                              {{ specification }}
+                            </ul>
+                          {%- elsif i == '5' and block.settings.show_reviews -%}
+                            <div class="spr-reviews" id="shopify-product-reviews" data-id="{{ product.id }}">
+                              {{ product.metafields.spr.reviews }}
+                            </div>
+                          {%- else -%}
+                            {{ block.settings[text_id] }}
+                            {{ block.settings[page_id].content }}
+                          {%- endif -%}
+                        </div>
+                      </div>
+                    </details>
+                  </details-disclosure>
+                  {%- assign first_tab_rendered = true -%}
+                {%- else -%}
+                  {%- capture tab_btns -%}
+                    {{ tab_btns }}
+                    <button type="button" class="tablist__tab font-bold" id="tab-{{ i }}" role="tab" aria-controls="panel-{{ i }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                      {{ title }}
+                    </button>
+                  {%- endcapture -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if block.settings.style == 'tabs' -%}
+                <tabbed-content>
+                  <div class="tablist overflow-hidden relative mb-4 no-js-hidden">
+                    <div class="tablist__scroller flex" role="tablist">
+                      {{ tab_btns }}
+                    </div>
+                  </div>
+                  {%- for i in tab_indices -%}
+                    {%- liquid
+                      assign text_id = 'tab_' | append: i | append: '_text'
+                      assign page_id = 'tab_' | append: i | append: '_page'
+                    -%}
+                    <div
+                      id="panel-{{ i }}"
+                      role="tabpanel"
+                      tabindex="0"
+                      aria-labelledby="tab-{{ i }}"
+                      {% unless forloop.first %}
+                        hidden
+                      {% endunless %}
+                    >
+                      {%- if forloop.first and block.settings.show_description -%}
+                        <div class="rte product-description">
+                          {{ product.description }}
+                        </div>
+                      {%- elsif i == '4' and specification != blank -%}
+                        <ul class="product-spec">
+                          {{ specification }}
+                        </ul>
+                      {%- elsif i == '5' and block.settings.show_reviews -%}
+                        <div class="spr-reviews" id="shopify-product-reviews" data-id="{{ product.id }}">
+                          {{ product.metafields.spr.reviews }}
+                        </div>
+                      {%- else -%}
+                        <div class="rte">
+                          {{ block.settings[text_id] }}
+                          {{ block.settings[page_id].content }}
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  {%- endfor -%}
+                </tabbed-content>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+          {%- if block.settings.style == 'tabs' -%}
+            <script src="{{ 'tabs.js' | asset_url }}" defer="defer"></script>
+          {%- endif -%}
+
+        {%- when 'richtext' -%}
+          {%- if block.settings.text != blank -%}
+            <div class="product-details__block product-details__text rte" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+            </div>
+          {%- endif -%}
+
+        {%- when 'custom-liquid' -%}
+          <div class="product-details__block" {{ block.shopify_attributes }}>
+            {{ block.settings.custom_liquid }}
+          </div>
+
+        {%- when 'divider' -%}
+          <hr
+            class="{{ block.settings.spacing }}{% unless block.settings.show_line %} invisible{% endunless %}"
+            {{ block.shopify_attributes }}
+          >
+
+        {%- when 'highlight-text' -%}
+          {%- if block.settings.title != blank or block.settings.text != blank -%}
+            {%- liquid
+              assign last_section_index = forloop.index0 | minus: 1
+              assign next_section_index = forloop.index
+              assign last_section_was_highlight = false
+              assign next_section_is_highlight = false
+
+              if last_section_index > -1 and section.blocks[last_section_index].type == 'highlight-text'
+                assign last_section_was_highlight = true
+              endif
+
+              if section.blocks[next_section_index].type == 'highlight-text'
+                assign next_section_is_highlight = true
+              endif
+            -%}
+
+            {%- if last_section_was_highlight == false and next_section_is_highlight -%}
+              <div
+                class="product-details__block product-details__highlight-grid grid sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2"
+              >
+            {%- endif -%}
+
+            <div
+              class="{% unless last_section_was_highlight or next_section_is_highlight %}product-details__block {% endunless %}product-details__highlight text-center"
+              {{ block.shopify_attributes }}
+            >
+              {%- if block.settings.title != blank -%}
+                <p class="h4">{{- block.settings.title | escape -}}</p>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <div class="rte large-text">{{ block.settings.text }}</div>
+              {%- endif -%}
+            </div>
+
+            {%- if last_section_was_highlight and next_section_is_highlight == false -%}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+
+        {%- when 'payment-methods' -%}
+          <div class="product-details__block panel" {{ block.shopify_attributes }}>
+            {%- if block.settings.title != blank -%}
+              <h3 class="h5 mb-6">{{- block.settings.title | escape -}}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.title1 != blank -%}
+              <p class="h6 regular-text mb-4" id="payment-methods-title">{{- block.settings.title1 | escape -}}</p>
+            {%- endif -%}
+
+            {%- if block.settings.show_payment_icons -%}
+              <div class="mb-4">
+                <ul
+                  class="payment-icons flex flex-wrap"
+                  role="list"
+                  {%- if block.settings.title1 != blank -%}
+                    aria-labelledby="payment-methods-title"
+                  {% endif %}
+                >
+                  {%- for type in shop.enabled_payment_types -%}
+                    <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.text1 != blank -%}
+              <div class="rte mb-4">{{ block.settings.text1 }}</div>
+            {%- endif -%}
+
+            {%- if block.settings.title2 != blank -%}
+              <p class="h6 regular-text mb-4 mt-8">{{- block.settings.title2 | escape -}}</p>
+            {%- endif -%}
+
+            {%- if block.settings.image -%}
+              {% render 'image', image: block.settings.image, src_width: block.settings.image.width, class: 'mb-4' %}
+            {%- endif -%}
+
+            {%- if block.settings.text2 != blank -%}
+              <div class="rte mb-4">{{ block.settings.text2 }}</div>
+            {%- endif -%}
+          </div>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product details",
+  "class": "cc-product-details product-details section pro_tabs_desktop_hide",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom Liquid"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_line",
+          "label": "Show line",
+          "default": true
+        },
+        {
+          "type": "radio",
+          "id": "spacing",
+          "label": "Spacing",
+          "options": [
+            {
+              "value": "mt-8 mb-8",
+              "label": "Default"
+            },
+            {
+              "value": "mt-12 mb-12",
+              "label": "Large"
+            }
+          ],
+          "default": "mt-8 mb-8"
+        }
+      ]
+    },
+    {
+      "type": "richtext",
+      "name": "Rich text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Rich text",
+          "default": "<p>Share information about this product with your customers.</p>"
+        }
+      ]
+    },
+    {
+      "type": "tabs",
+      "name": "Tabs",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Tabs style",
+          "options": [
+            {
+              "value": "collapsible",
+              "label": "Collapsible content"
+            },
+            {
+              "value": "tabs",
+              "label": "Horizontal tabs"
+            }
+          ],
+          "default": "collapsible"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_description",
+          "label": "Show description tab",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_specification",
+          "label": "Show specifications tab",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_reviews",
+          "label": "Show reviews tab",
+          "info": "Requires the [Shopify Product Reviews app](https://apps.shopify.com/product-reviews?ref=cleancanvas)",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "open_first",
+          "label": "Open first collapsible tab by default",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Specifications tab"
+        },
+        {
+          "type": "paragraph",
+          "content": "Include a list of labels and product metafield keys below, separated by a colon, one per line. E.g. Trim color:custom.trim_color. [Read more](https://cleancanvas.co.uk/support/enterprise/templates/product-page)"
+        },
+        {
+          "type": "textarea",
+          "id": "spec_metafields",
+          "label": "Metafields"
+        },
+        {
+          "type": "checkbox",
+          "id": "spec_right_align",
+          "label": "Right align values",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "spec_show_empty_metafields",
+          "label": "Show empty metafields",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "spec_empty_field_text",
+          "label": "Text to use for empty fields",
+          "default": "-"
+        },
+        {
+          "type": "header",
+          "content": "Custom tabs"
+        },
+        {
+          "type": "paragraph",
+          "content": "Show up to 3 custom tabs by adding a title and content or selecting a page"
+        },
+        {
+          "type": "header",
+          "content": "Tab 1"
+        },
+        {
+          "type": "text",
+          "id": "tab_1_title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_1_text",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "tab_1_page",
+          "label": "Content from page"
+        },
+        {
+          "type": "header",
+          "content": "Tab 2"
+        },
+        {
+          "type": "text",
+          "id": "tab_2_title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_2_text",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "tab_2_page",
+          "label": "Content from page"
+        },
+        {
+          "type": "header",
+          "content": "Tab 3"
+        },
+        {
+          "type": "text",
+          "id": "tab_3_title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_3_text",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "tab_3_page",
+          "label": "Content from page"
+        }
+      ]
+    },
+    {
+      "type": "collapsible-content",
+      "name": "Collapsible content",
+      "settings": [
+         {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "TAb Button Text"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "header",
+          "content": "Item Type Heading"
+        },
+        {
+          "type": "text",
+          "id": "Item_type_head",
+          "label": "Item Type Heading",
+          "default": "BILL OF MATERIALS"
+        },
+        {
+          "type": "header",
+          "content": "Items"
+        },
+          {
+          "type": "text",
+          "id": "Item_type1",
+          "label": "Item Type 1",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name1",
+          "label": "Item Name 1",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type2",
+          "label": "Item Type 2",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name2",
+          "label": "Item Name 2",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type3",
+          "label": "Item Type 3",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name3",
+          "label": "Item Name 3",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type4",
+          "label": "Item Type 4",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name4",
+          "label": "Item Name 4",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type5",
+          "label": "Item Type 5",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name5",
+          "label": "Item Name 5",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type6",
+          "label": "Item Type 6",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name6",
+          "label": "Item Name 6",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type7",
+          "label": "Item Type 7",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name7",
+          "label": "Item Name 7",
+          "default": "Cast Iron"
+        },
+          {
+          "type": "text",
+          "id": "Item_type8",
+          "label": "Item Type 8",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name8",
+          "label": "Item Name 8",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type9",
+          "label": "Item Type 9",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name9",
+          "label": "Item Name 9",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type10",
+          "label": "Item Type 10",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name10",
+          "label": "Item Name 10",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type11",
+          "label": "Item Type 11",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name11",
+          "label": "Item Name 11",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type12",
+          "label": "Item Type 12",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name12",
+          "label": "Item Name 12",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type13",
+          "label": "Item Type 13",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name13",
+          "label": "Item Name 13",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type14",
+          "label": "Item Type 14",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name14",
+          "label": "Item Name 14",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type15",
+          "label": "Item Type 15",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name15",
+          "label": "Item Name 15",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type16",
+          "label": "Item Type 16",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name16",
+          "label": "Item Name 16",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type17",
+          "label": "Item Type 17",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name17",
+          "label": "Item Name 17",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type18",
+          "label": "Item Type 18",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name18",
+          "label": "Item Name 18",
+          "default": "Cast Iron"
+        },
+                {
+          "type": "text",
+          "id": "Item_type19",
+          "label": "Item Type 19",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name19",
+          "label": "Item Name 19",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type20",
+          "label": "Item Type 20",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name20",
+          "label": "Item Name 20",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type21",
+          "label": "Item Type 21",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name21",
+          "label": "Item Name 21",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type22",
+          "label": "Item Type 22",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name22",
+          "label": "Item Name 22",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type23",
+          "label": "Item Type 23",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name23",
+          "label": "Item Name 23",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type24",
+          "label": "Item Type 24",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name24",
+          "label": "Item Name 24",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type25",
+          "label": "Item Type 25",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name25",
+          "label": "Item Name 25",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type26",
+          "label": "Item Type 26",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name26",
+          "label": "Item Name 26",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type27",
+          "label": "Item Type 27",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name27",
+          "label": "Item Name 27",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type28",
+          "label": "Item Type 28",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name28",
+          "label": "Item Name 28",
+          "default": "Cast Iron"
+        } ,
+                {
+          "type": "text",
+          "id": "Item_type29",
+          "label": "Item Type 29",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name29",
+          "label": "Item Name 29",
+          "default": "Cast Iron"
+        } ,
+                {
+          "type": "text",
+          "id": "Item_type30",
+          "label": "Item Type 30",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name30",
+          "label": "Item Name 30",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type31",
+          "label": "Item Type 31",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name31",
+          "label": "Item Name 31",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type32",
+          "label": "Item Type 32",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name32",
+          "label": "Item Name 32",
+          "default": "Cast Iron"
+        },
+        {
+          "type": "text",
+          "id": "Item_type33",
+          "label": "Item Type 33",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name33",
+          "label": "Item Name 33",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "text",
+          "id": "Item_type34",
+          "label": "Item Type 34",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name34",
+          "label": "Item Name 34",
+          "default": "Cast Iron"
+        } ,
+                {
+          "type": "text",
+          "id": "Item_type35",
+          "label": "Item Type 35",
+          "default": "Casing"
+        },
+                  {
+          "type": "text",
+          "id": "Item_name35",
+          "label": "Item Name 35",
+          "default": "Cast Iron"
+        } ,
+        {
+          "type": "header",
+          "content": "Second Item Type Heading"
+        },
+        {
+          "type": "text",
+          "id": "Item_type_head2",
+          "label": "Item Type Heading",
+          "default": "PUMP PERFORMANCE"
+        },
+          {
+          "type": "text",
+          "id": "Item_type_second1",
+          "label": "Item Type",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name_second1",
+          "label": "Item Name",
+          "default": "Cast Iron"
+        },
+          {
+          "type": "text",
+          "id": "Item_type_second2",
+          "label": "Item Type",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name_second2",
+          "label": "Item Name",
+          "default": "Cast Iron"
+        },
+          {
+          "type": "text",
+          "id": "Item_type_second3",
+          "label": "Item Type",
+          "default": "Casing"
+        },
+          {
+          "type": "text",
+          "id": "Item_name_second3",
+          "label": "Item Name",
+          "default": "Cast Iron"
+        }
+
+      ]
+    },
+       {
+      "type": "product-description",
+      "name": "Product Description",
+         "limit":1,
+      "settings": [
+         {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "TAb Button Text"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "header",
+          "content": "Product Description"
+        }
+
+      ]
+    },
+        {
+      "type": "legal",
+      "name": "legal",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Legal Message"
+        },
+
+        {
+          "type": "checkbox",
+          "id": "legal",
+          "label": "Legal Message Content",
+          "default": false
+        },
+       {
+          "type": "richtext",
+          "id": "legal_message_content",
+          "label": "Legal message heading",
+          "default":"<p>Not a genuine Viking® item. This item is an aftermarket drop-in part-for-part replacement. It is not manufactured by Viking®. Viking® is a registered trademark of Viking Pump, Inc. PumpRack.com is not affiliated with or sponsored by Viking Pump, Inc.</p>"
+        }
+
+
+
+      ]
+    },
+    {
+      "type": "collapsible-content-v2",
+      "name": "Collapsible content-v2",
+      "settings": [
+         {
+          "type": "checkbox",
+          "id": "open",
+          "label": "Open by default",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "TAb Button Text"
+        },
+        {
+          "type": "text",
+          "id": "heading_2",
+          "label": "Heading",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "header",
+          "content": "Item Type Heading"
+        },
+        {
+          "type": "text",
+          "id": "Item_type_head2",
+          "label": "Item Type Heading",
+          "default": "BILL OF MATERIALS"
+        },
+        {
+          "type": "header",
+          "content": "Items"
+        },
+                    {
+          "type": "checkbox",
+          "id": "download_info",
+          "label": "download_info Content",
+          "default": false
+        },
+          {
+          "type": "image_picker",
+          "id": "Item_img",
+          "label": "Item Image"
+        },
+          {
+          "type": "richtext",
+          "id": "Item_type_desc",
+          "label": "Download Text",
+          "default": "<p>Hundreds more internal gear pumps in stock including surplus, used, and aftermarket equipment.</p>"
+        },
+        {
+          "type": "text",
+          "id": "item-btn",
+          "label": "btn",
+            "default":"VIEW ALL STOCK NOW"
+        },
+        {
+          "type": "url",
+          "id": "item-btn-link",
+          "label": "btn link"
+        },
+         {
+          "type": "image_picker",
+          "id": "Item_download_icon",
+          "label": "download book icon"
+        },
+        {
+          "type": "text",
+          "id": "Item_download_btn",
+          "label": "download button text"
+        },
+          {
+          "type": "url",
+          "id": "Item_download_btn_link",
+          "label": "download button url"
+        },
+        {
+          "type": "image_picker",
+          "id": "Item_download_icon2",
+          "label": "download book icon 2"
+        },
+        {
+          "type": "text",
+          "id": "Item_download_btn2",
+          "label": "download button text 2"
+        },
+          {
+          "type": "url",
+          "id": "Item_download_btn_link2",
+          "label": "download button url 2"
+        }
+
+      ]
+    },
+    {
+      "type": "highlight-text",
+      "name": "Highlight text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Highlight title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Text to highlight a key feature of your product</p>"
+        }
+      ]
+    },
+    {
+      "type": "payment-methods",
+      "name": "Payment methods",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Payment & Security"
+        },
+        {
+          "type": "header",
+          "content": "Payment methods"
+        },
+        {
+          "type": "text",
+          "id": "title1",
+          "label": "Title",
+          "default": "Payment methods"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_icons",
+          "label": "Show payment icons",
+          "default": true
+        },
+        {
+          "type": "richtext",
+          "id": "text1",
+          "label": "Text",
+          "default": "<p>Your payment information is processed securely. We do not store credit card details nor have access to your credit card information.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Secondary content"
+        },
+        {
+          "type": "text",
+          "id": "title2",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "richtext",
+          "id": "text2",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  
+  "presets": [
+    {
+      "name": "Product Details"
+    }
+  ]
+}
+{% endschema %}

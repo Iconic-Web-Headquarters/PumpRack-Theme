@@ -1,0 +1,60 @@
+<div class="shop_media_icon_flex">
+<div class="container">
+ {% for block in section.blocks %} 
+  <div class="icon_text rte icon_flex">
+    <img src="{{ block.settings.iconlist-img | img_url:'master' }}" class="custom_icon">
+    <div class="icon-list-content">
+    <p class="custom_icon__text">{{ block.settings.iconlist-title }}</p>
+    <a href="{{ block.settings.iconlist-link }}" class="ct-icon-list-link">{{ block.settings.iconlist-link-label }}</a>
+  </div>
+   </div>
+  {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "ct icon list",
+  "class": "custom-icon-list",
+  "settings": [
+
+  ],
+  "blocks": [
+    {
+      "type": "icon-list",
+      "name":"icon list",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "iconlist-img",
+          "label": "icon Image"
+        },
+        {
+          "type": "text",
+          "id": "iconlist-title",
+          "label": "icon Text",
+          "default": "Title"
+        },
+            {
+          "type": "text",
+          "id": "iconlist-link-label",
+          "label": "icon link label",
+          "default": "learn more"
+        },
+            {
+          "type": "url",
+          "id": "iconlist-link",
+          "label": "icon link url",
+        }
+        
+      ]
+    }
+  ]
+  ,
+  "presets": [
+    {
+      "name": "custom icon list"
+    }
+  ]
+}
+{% endschema %}

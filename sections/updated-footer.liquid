@@ -1,0 +1,721 @@
+<link rel="stylesheet" href="{{ 'footer.css' | asset_url }}" media="print" onload="this.media='all'">
+
+{%- if section.settings.enable_country_selector or section.settings.enable_language_selector -%}
+  <script src="{{ 'custom-select.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- style -%}
+  .footer {
+    --bg-color: {{ section.settings.bg_color.rgba }};
+    --heading-color: {{ section.settings.text_color.rgb }};
+    --text-color: {{ section.settings.text_color.rgb }};
+  }
+{%- endstyle -%}
+
+
+<footer class="footer bg-theme-bg text-theme-text">
+
+  <div class="container">
+      {%- if section.settings.show_back_to_top -%}
+  <a href="#" class="back-to-top text-sm block border-top go-to-top_btn font-bold text-center text-current p-6 border-bottom"{% if settings.animations_enabled != "disabled" %} data-cc-animate{% endif %}>
+  <img src="https://cdn.shopify.com/s/files/1/0556/7971/3366/files/go-up.png?v=1721327371" class="go-to-top">  
+  </a>
+{%- endif -%}
+    {%- if section.blocks.size > 0 -%}
+      <div class="footer__main md:flex md:flex-wrap mb-10 md:mb-6">
+        {%- assign is_first_disclosure = true -%}
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+
+
+            {%- when 'text_with_icons' -%}
+              <div class="footer-col footer-column-text_with_icons footer-col--links footer-col--not-collapsed{% if section.blocks.size == 1 %} footer-col--text-full-width{% endif %}" {{ block.shopify_attributes }}{% if settings.animations_enabled != "disabled" %} data-cc-animate data-cc-animate-delay="{{ forloop.index | times: 0.07 }}s"{% endif %}>
+                <div class="footer-block mb-8 {{ block.settings.text_align }}">
+                  {%- if block.settings.icon_heading != blank -%}
+                    <h2 class="footer-block__heading font-body font-bold text-h6 regular-text">{{ block.settings.icon_heading | escape }}</h2>
+                  {%- endif -%}
+            
+              <div class="footer-block__text rte icon_flex">
+             {%- if block.settings.custom_icon  != blank -%}
+            <img src="{{ block.settings.custom_icon | img_url:'master' }}" class="custom_icon">
+             {%- endif -%}
+            
+                  {%- if block.settings.icon_text  != blank -%}
+                    <div class="custom_icon__text">
+                      {{ block.settings.icon_text }}
+                    </div>
+                  {%- endif -%}
+             </div>
+                   <div class="footer-block__text rte icon_flex">
+             {%- if block.settings.custom_icon2  != blank -%}
+            <img src="{{ block.settings.custom_icon2 | img_url:'master' }}" class="custom_icon">
+             {%- endif -%}
+            
+                  {%- if block.settings.icon_text2  != blank -%}
+                    <div class="custom_icon__text">
+                      {{ block.settings.icon_text2 }}
+                    </div>
+                  {%- endif -%}
+             </div>
+                   <div class="footer-block__text rte icon_flex">
+             {%- if block.settings.custom_icon3  != blank -%}
+            <img src="{{ block.settings.custom_icon3 | img_url:'master' }}" class="custom_icon">
+             {%- endif -%}
+            
+                  {%- if block.settings.icon_text3  != blank -%}
+                    <div class="custom_icon__text">
+                      {{ block.settings.icon_text3 }}
+                    </div>
+                  {%- endif -%}
+             </div>
+
+            {%- if block.settings.icon_heading2 != blank -%}
+                    <h2 class="footer-block__heading font-body font-bold text-h6 regular-text bottom_heading">{{ block.settings.icon_heading2 | escape }}</h2>
+                  {%- endif -%}
+
+                          <div class="footer-block__text rte icon_flex bottom">
+             {%- if block.settings.custom_icon4  != blank -%}
+            <img src="{{ block.settings.custom_icon4 | img_url:'master' }}" class="custom_icon">
+             {%- endif -%}
+            
+                  {%- if block.settings.icon_text4  != blank -%}
+                    <div class="custom_icon__text">
+                      {{ block.settings.icon_text4 }}
+                    </div>
+                  {%- endif -%}
+             </div>
+                  
+                </div>
+              </div>
+
+
+            
+            {%- when 'text' -%}
+              <div class="footer-col footer-col--text footer-col--not-collapsed{% if section.blocks.size == 1 %} footer-col--text-full-width{% endif %}" {{ block.shopify_attributes }}{% if settings.animations_enabled != "disabled" %} data-cc-animate data-cc-animate-delay="{{ forloop.index | times: 0.07 }}s"{% endif %}>
+                <div class="footer-block mb-8 {{ block.settings.text_align }}">
+                  {%- if block.settings.image != blank -%}
+                    <div class="media relative" style="max-width: {{ block.settings.image_width }}px;">
+                      {% render 'image', class: "footer-block__image", image: block.settings.image, src_width: block.settings.image_width, srcset_2x: true %}
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.heading != blank -%}
+                    <h2 class="footer-block__heading font-body font-bold text-h6 regular-text">{{ block.settings.heading | escape }}</h2>
+                  {%- endif -%}
+                  {%- if block.settings.text != blank -%}
+                    <div class="footer-block__text rte">
+                      {{ block.settings.text }}
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.button_label != blank -%}
+                    <div class="footer-block__btns">
+                      <a class="btn btn--primary" {% if block.settings.button_link == blank %}role="link" aria-disabled="true"{% else %}href="{{ block.settings.button_link }}"{% endif %}>
+                        {{- block.settings.button_label | escape -}}
+                      </a>
+                    </div>
+                  {%- endif -%}
+                  {%- if shop.features.follow_on_shop? and block.settings.enable_follow_on_shop -%}
+                    <div class="footer-block__btns">
+                      {{ shop | login_button: action: 'follow' }}
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.show_social -%}
+                    {%- liquid
+                      if block.settings.text_align == "text-end"
+                        assign class = "justify-end"
+                      elsif block.settings.text_align == "text-center"
+                        assign class = "justify-center"
+                      else
+                        assign class = "justify-start"
+                      endif
+                    -%}
+                    <div class="footer-block__btns footer-block__social">
+                      {% render 'social-media', icon: settings.social_custom_icon, icon_height: 24, class: class %}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- when 'form' -%}
+            <div class="footer-col footer_form footer-col--text form footer-col--not-collapsed{% if section.blocks.size == 1 %} footer-col--text-full-width{% endif %}" {{ block.shopify_attributes }}{% if settings.animations_enabled != "disabled" %} data-cc-animate data-cc-animate-delay="{{ forloop.index | times: 0.07 }}s"{% endif %}>
+            <div class="footer-block mb-8 {{ block.settings.text_align }}">
+                  <div class="support_form">
+                {%- if block.settings.heading != blank -%}
+      <div class="mb-heading reading-width rte cc-animate-init cc-animate-in" data-cc-animate>
+        <h2 class="h4 section__heading">{{ block.settings.heading | escape }}</h2>
+          <div class="card__rte flex-auto rte">
+     {{ block.settings.form_desc}}
+    </div>
+      </div>
+    {%- endif -%}
+
+
+  {%- form 'contact', id: form_id, class: 'form reading-width' -%}
+      <div class="form__grid grid grid-cols-2 gap-x-theme gap-y-6" data-cc-animate>
+          <div class="col-span-2 md:col-span-1 is-required">
+                <input type="text"
+                       class="input w-full"
+                       id="{{ form_id }}-name"
+                  placeholder="{{ 'contact.form.name' | t }}"
+                       name="contact[{{ 'contact.form.name' | t }}]"
+                       autocomplete="name"
+                       value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                         aria-required="true"
+                         required>
+
+          </div>
+        <div class="col-span-2 md:col-span-1 is-required">
+                <input type="email"
+                       class="input w-full"
+                       id="{{ form_id }}-email"
+                  placeholder="{{ 'contact.form.email' | t }}"
+                       name="contact[email]"
+                       autocomplete="email"
+                       value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                       {%- if form.errors contains 'email' %}
+                         aria-invalid="true"
+                         aria-describedby="{{ form_id }}-email-error"
+                       {%- endif %}
+                         aria-required="true"
+                         required>
+             </div>
+        <div class="col-span-2 md:col-span-1 is-required">
+                <input type="tel"
+                       class="input w-full"
+                       id="{{ form_id }}-phone"
+                       name="contact[{{ 'contact.form.phone' | t }}]"
+                       pattern="[0-9\-]*"
+                  placeholder="{{ 'contact.form.phone' | t }}"
+                       autocomplete="tel"
+                       value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                         aria-required="true"
+                         required>
+               </div>
+                <div class="col-span-2 md:col-span-1 is-required">
+                <input type="text"
+                       class="input w-full"
+                       id="{{ form_id }}-equipment"
+                       name="contact[{{ 'contact.form.equipment' | t }}]"
+                       pattern="[0-9\-]*"
+                  placeholder="Type of Equipment"
+                       autocomplete="tel"
+                       value="{% if form.equipment %}{{ form.equipment }}{% elsif customer %}{{ customer.equipment}}{% endif %}"
+                         aria-required="true"
+                         required>
+                 </div>
+
+
+            {%- if form.errors contains block.type -%}
+              <p class="form__field-error" id="{{ form_id }}-{{ block.type }}-error">
+                {{ form.errors.translated_fields[block.type] | capitalize }}
+                {{ form.errors.messages[block.type] }}
+              </p>
+            {%- endif -%}
+    
+      </div>
+
+      {%- if form.posted_successfully? -%}
+        <div class="alert mt-8 bg-success-bg text-success-text" tabindex="-1" autofocus{% if settings.animations_enabled != "disabled" %} data-cc-animate{% endif %}>
+          {{ 'contact.form.post_success' | t }}
+        </div>
+      {%- elsif form.errors -%}
+        <div class="alert mt-8 bg-error-bg text-error-text" tabindex="-1" autofocus{% if settings.animations_enabled != "disabled" %} data-cc-animate{% endif %}>
+          <h2 class="h5 text-current">{{ 'contact.form.error_heading' | t }}</h2>
+          <ul class="styled-list">
+            <li>
+              <a class="link text-current" href="#{{ form_id }}-email">
+                {{- form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] -}}
+              </a>
+            </li>
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="mt-6"{% if settings.animations_enabled != "disabled" %} data-cc-animate{% endif %}>
+          <button class="{{ section.settings.button_style }} w-full md:w-auto">GET STARTED</button>
+        </div>
+      {%- endif -%}
+    {%- endform -%}      
+              </div>
+                  
+                </div>
+              </div>
+
+              {%- when 'newsletter' -%}
+              <div class="footer-col footer-col--newsletter{% if block.settings.collapse_mobile %} footer-col--collapsed{% else %} footer-col--not-collapsed{% endif %}" {{ block.shopify_attributes }}{% if settings.animations_enabled != "disabled" %} data-cc-animate data-cc-animate-delay="{{ forloop.index | times: 0.07 }}s"{% endif %}>
+                {%- if block.settings.collapse_mobile -%}
+                  <footer-menu>
+                    <details class="footer-menu disclosure{% if is_first_disclosure %} footer-menu--first{% endif %}" open>
+                      <summary tabindex="-1">
+                        <div class="flex justify-between items-center">
+                          <h2 class="disclosure__title font-body font-bold text-h6 regular-text">
+                            {{ block.settings.heading | escape }}
+                          </h2>
+                          <span class="disclosure__toggle">
+                            {%- if settings.disclosure_toggle == 'plus' -%}
+                              {% render 'icon-plus' %}
+                            {%- else -%}
+                              {% render 'icon-chevron-down' %}
+                            {%- endif -%}
+                          </span>
+                        </div>
+                      </summary>
+                      <div class="disclosure__panel has-motion">
+                        <div class="disclosure__content">
+                          {%- if block.settings.text != blank -%}
+                            {{ block.settings.text }}
+                          {%- endif -%}
+
+                          {% render 'newsletter-signup', id: 'footer-signup', arrow_button: true, tags: 'newsletter' %}
+
+                          <div class="footer_bottom_links">
+                           {%- for link in linklists.footer-bottom.links -%}
+                          <a href="{{ link.url }}" class="footer_bottom_links-menu_item loop-{{ forloop.index }}"><span>{{ link.title }} </span></a>
+                          {% endfor %}
+                          </div>
+                        </div>
+                      </div>
+                    </details>
+                  </footer-menu>
+                  {%- assign is_first_disclosure = false -%}
+                {%- else -%}
+                  <div class="footer-block">
+                    <h2 class="footer-block__heading font-body font-bold text-h6 regular-text">
+                      {%- if block.settings.heading != blank -%}
+                        {{ block.settings.heading | escape }}
+                      {%- endif -%}
+                    </h2>
+
+                    {%- if block.settings.text != blank -%}
+                      {{ block.settings.text }}
+                    {%- endif -%}
+
+                    {% render 'newsletter-signup', id: 'footer-signup', arrow_button: true, tags: 'newsletter' %}
+                         <div class="footer_bottom_links">
+                           {%- for link in linklists.footer-bottom.links -%}
+                          <a href="{{ link.url }}" class="footer_bottom_links-menu_item loop-{{ forloop.index }}"><span>{{ link.title }} </span></a>
+                          {% endfor %}
+                          </div>
+                  </div>
+                {%- endif -%}
+
+             
+              </div>
+
+            {%- when 'link_list' -%}
+              {%- if block.settings.menu != blank and block.settings.heading != blank -%}
+                <div class="footer-col footer-col--links footer-col--collapsed" {{ block.shopify_attributes }}{% if settings.animations_enabled != "disabled" %} data-cc-animate data-cc-animate-delay="{{ forloop.index | times: 0.07 }}s"{% endif %}>
+                  <footer-menu>
+                    <details class="footer-menu disclosure{% if is_first_disclosure %} footer-menu--first{% endif %}" open>
+                      <summary tabindex="-1">
+                        <div class="flex justify-between items-center">
+                          <h2 class="disclosure__title font-body font-bold text-h6 regular-text">
+                            {{- block.settings.heading | escape -}}
+                          </h2>
+                          <span class="disclosure__toggle">
+                            {%- if settings.disclosure_toggle == 'plus' -%}
+                              {% render 'icon-plus' %}
+                            {%- else -%}
+                              {% render 'icon-chevron-down' %}
+                            {%- endif -%}
+                          </span>
+                        </div>
+                      </summary>
+                      <div class="disclosure__panel has-motion">
+                        <ul class="footer-menu__links disclosure__content" role="list">
+                          {%- for link in block.settings.menu.links -%}
+                            <li>
+                              <a href="{{ link.url }}">{{ link.title }}</a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                    </details>
+                  </footer-menu>
+                </div>
+                {%- assign is_first_disclosure = false -%}
+              {%- endif -%}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.enable_country_selector or section.settings.enable_language_selector or section.settings.show_payment_icons -%}
+      <div class="footer__meta grid grid-cols-1 lg:grid-cols-2 gap-x-theme gap-y-10"{% if settings.animations_enabled != "disabled" %} data-cc-animate{% endif %}>
+        {%- if section.settings.show_payment_icons -%}
+          <div class="footer__payment{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} lg:col-start-2 lg:row-start-1 footer__payment--right{% endif %}">
+            <span class="visually-hidden">{{ 'sections.footer.payment_methods' | t }}</span>
+            <ul class="payment-icons flex flex-wrap" role="list">
+              {%- for type in shop.enabled_payment_types -%}
+                <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.enable_country_selector or section.settings.enable_language_selector -%}
+          <div class="lg:col-start-1 lg:row-start-1 footer__localization">
+            {% render 'localization-form', id: 'footer-localization', hide_labels: true %}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+
+
+  </div>
+     
+</footer>
+
+<div class="footer_bottom_copy">
+  <div class="container">
+    <div class="footer__base bottom_flex"{% if settings.animations_enabled != "disabled" %} data-cc-animate{% endif %}>
+      <div class="copyright">
+        <span>&copy; Copyright {{ "now" | date: "%Y" }} <a href="/" title="">PumpRack.com</a>.</span>
+      </div>
+        <div class="copyright_right_text">
+        <span>Viking® Sandpiper® PulsaFeeder® are registered trademarks of IDEX CORPORATION. PumpRack.com is not affiliated with or sponsored by IDEX or it’s trademarked brands.</span>
+      </div>
+      {%- if section.settings.secondary_menu != blank -%}
+        <div>
+          <ul class="footer-sublinks flex flex-wrap gap-x-theme" role="list">
+            {% for link in section.settings.secondary_menu.links %}
+              <li class="footer-sublinks__item">
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {%- endif -%}
+    </div>
+    
+  </div>
+</div>
+
+
+{% javascript %}
+  customElements.whenDefined('details-disclosure').then(() => {
+    class FooterMenu extends DetailsDisclosure {
+      constructor() {
+        super();
+        this.reset(false);
+        window.addEventListener('on:breakpoint-change', this.reset.bind(this));
+      }
+
+      reset() {
+        const isLargeScreen = window.matchMedia(theme.mediaQueries.md).matches;
+        const isConfirmNewsletter = !isLargeScreen &&
+          (window.location.hash === "#footer-signup_form" && this.querySelector('#footer-signup_form') !== null);
+
+        this.disclosure.open = isLargeScreen || isConfirmNewsletter;
+
+        if (isLargeScreen) {
+          this.toggle.setAttribute('tabindex', '-1');
+        } else {
+          this.toggle.removeAttribute('tabindex');
+        }
+      }
+    }
+
+    customElements.define('footer-menu', FooterMenu);
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Updated Footer Bottom",
+  "class": "cc-footer updated",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_back_to_top",
+      "label": "Show 'Back to top'",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_powered_by",
+      "label": "Show 'Powered by Shopify'",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Country/Region selector",
+      "info": "To add a country/region, go to your [payment settings](/admin/settings/payments)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "label": "Enable country/region selector",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Language selector",
+      "info": "To add a language, go to your [language settings](/admin/settings/languages)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "label": "Enable language selector",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Secondary menu"
+    },
+    {
+      "type": "link_list",
+      "id": "secondary_menu",
+      "label": "Secondary menu",
+      "info": "This menu won't show dropdown items."
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#070707"
+    }
+  ],
+  "max_blocks": 50,
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "Footer menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading (required)",
+          "default": "Footer links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "info": "This menu won't show dropdown items.",
+          "default": "footer"
+        }
+      ]
+    },
+         {
+      "type": "form",
+      "name": "form",
+      "limit": 1,
+      "settings": [
+        {
+      "type": "text",
+      "id": "heading",
+      "default": "Contact form",
+      "label": "Contact us"
+    },
+         {
+      "type": "richtext",
+      "id": "form_desc",
+      "default": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore</p>",
+      "label": "Form Description"
+    }
+      ]
+    },
+      {
+      "type": "text_with_icons",
+      "name": "text_with_icons",
+      "limit": 2,
+      "settings": [ 
+        {
+          "type": "text",
+          "id": "icon_heading",
+          "label": "Icon Heading",
+          "default": "Talk about your store"
+        },
+         {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "icon Image"
+        },
+        {
+          "type": "richtext",
+          "id": "icon_text",
+          "label": "icon Text",
+          "default": "<p>hare store details, promotions, or brand content with your customers.</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon2",
+          "label": "icon Image 2"
+        },
+        {
+          "type": "richtext",
+          "id": "icon_text2",
+          "label": "icon Text2",
+          "default": "<p>hare store details, promotions, or brand content with your customers.</p>"
+        },
+         {
+          "type": "image_picker",
+          "id": "custom_icon3",
+          "label": "icon Image 3"
+        },
+        {
+          "type": "richtext",
+          "id": "icon_text3",
+          "label": "icon Text3",
+          "default": "<p>hare store details, promotions, or brand content with your customers.</p>"
+        },
+        {
+          "type": "text",
+          "id": "icon_heading2",
+          "label": "Icon Heading 2",
+          "default": "Talk about your store"
+        },
+         {
+          "type": "image_picker",
+          "id": "custom_icon4",
+          "label": "icon Image4"
+        },
+        {
+          "type": "richtext",
+          "id": "icon_text4",
+          "label": "icon Text 4",
+          "default": "<p>hare store details, promotions, or brand content with your customers.</p>"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Image, Text and Socials",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "image_width",
+          "min": 50,
+          "max": 300,
+          "step": 10,
+          "unit": "px",
+          "label": "Maximum image width",
+          "default": 150
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Talk about your store"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Share store details, promotions, or brand content with your customers.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_follow_on_shop",
+          "default": false,
+          "label": "Enable Follow on Shop",
+          "info": "To allow customers to follow your store on the Shop app from your storefront, Shop Pay must be enabled. [Learn more](https://help.shopify.com/manual/online-store/themes/customizing-themes/follow-on-shop)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_social",
+          "label": "Show social media links",
+          "info": "Add links to your social media accounts in theme settings.",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Content alignment",
+          "options": [
+            {
+              "value": "text-start",
+              "label": "Left"
+            },
+            {
+              "value": "text-center",
+              "label": "Center"
+            },
+            {
+              "value": "text-end",
+              "label": "Right"
+            }
+          ],
+          "default": "text-start"
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Email signup",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Newsletter"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Sign up for exclusive offers, original stories, events and more.</p>"
+        },
+        {
+          "type": "paragraph",
+          "content": "Customers who subscribe will have their email address added to the \"accepts marketing\" [customer list](/admin/customers?query=&accepts_marketing=1)"
+        },
+        {
+          "type": "checkbox",
+          "id": "collapse_mobile",
+          "label": "Show as collapsible content on mobile",
+          "default": true
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var goToTopBtn = document.querySelector('.go-to-top_btn');
+
+    goToTopBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  });
+</script>

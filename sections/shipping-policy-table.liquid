@@ -1,0 +1,148 @@
+<div class="container">
+  <div class="table-container custom_table">
+  <table>
+    <thead>
+      <tr>
+        <th>Type of Order</th>
+        <th>Standard</th>
+        <th>Expedite</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="ct_style_table">In-Stock Small Parts</span> (Less than 125lbs)</td>
+        <td>Next Day</td>
+        <td>Same Day</td>
+      </tr>
+
+      <tr>
+        <td><span class="ct_style_table">In-Stock Pumps & Large Parts</span> (All pumps, and parts over 125lbs)</td>
+        <td>2-3 Days</td>
+        <td>Same Day</td>
+      </tr>
+
+      <tr>
+        <td><span class="ct_style_table">Build-to-Order</span> (Seal or part swap, other customization)</td>
+        <td>3-7 Days</td>
+        <td>1-4 Days</td>
+      </tr>
+      <tr>
+        <td><span class="ct_style_table">Pump Rebuilds</span> (Ground up, on-demand re-manufacturing)</td>
+        <td>5-7 Days</td>
+        <td>1-4 Days</td>
+      </tr>
+      <!-- Add more rows as needed -->
+    </tbody>
+  </table>
+</div>
+  </div>
+
+
+{% schema %}
+{
+  "name": "Shipping Policy Table",
+  "class":"custom_table_main",
+  "settings": [
+    
+  ],
+    "presets": [
+    {
+      "name": "Shipping Policy Table"
+    }
+  ]
+  
+}
+{% endschema %}
+
+
+<style>
+  .table-container {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--secondary-color, #595857);
+    margin-bottom: 16px;
+  }
+
+  .custom_table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .custom_table th,
+  .custom_table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--secondary-color, #595857);
+    text-align: left;
+  }
+  .custom_table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--secondary-color, #595857);
+    text-align: left;
+    color: var(--Black, #1b1b1b);
+    font-family: Manrope;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 175%; /* 28px */
+  }
+  .ct_style_table {
+    color: var(--Primary-Color, #ea5803);
+    font-family: Manrope;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 175%; /* 28px */
+  }
+
+  .custom_table th {
+    background: var(--primary-color, #ea5803);
+    color: var(--white, #ffffff);
+    color: var(--White, #fff);
+    font-family: Manrope;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 175%;
+  }
+
+  .custom_table tr:last-child td {
+    border-bottom: none;
+  }
+
+  @media(max-width:767px){
+  .custom_table th {
+    background: var(--primary-color, #ea5803);
+    color: var(--White, #fff);
+    font-family: Manrope;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.4;
+}
+.custom_table th, .custom_table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--secondary-color, #595857);
+    text-align: left;
+}
+.custom_table td {
+    padding: 8px 5px;
+    border-bottom: 1px solid var(--secondary-color, #595857);
+    text-align: left;
+    color: var(--Black, #1b1b1b);
+    font-family: Manrope;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.2;
+}
+.ct_style_table {
+    color: var(--Primary-Color, #ea5803);
+    font-family: Manrope;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 175%;
+}
+  }
+</style>
+

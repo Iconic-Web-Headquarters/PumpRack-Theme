@@ -1,0 +1,136 @@
+<div class="support_form">
+  {%- if block.settings.heading != blank -%}
+    <div class="mb-heading reading-width rte cc-animate-init cc-animate-in" data-cc-animate>
+      <h2 class="h4 section__heading">{{ block.settings.heading | escape }}</h2>
+      <div class="card__rte flex-auto rte">
+        {{ block.settings.form_desc }}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- form 'contact', id: form_id, class: 'form reading-width' -%}
+    <div class="form__grid grid grid-cols-2 gap-x-theme gap-y-6" data-cc-animate>
+      <div class="col-span-2 is-required">
+        <input
+          type="text"
+          class="input w-full"
+          id="{{ form_id }}-part"
+          name="contact[{{ 'contact.form.part' | t }}]"
+          pattern="[0-9\-]*"
+          placeholder="Type Of Part"
+          autocomplete="part"
+          value="{% if form.part %}{{ form.part }}{% elsif customer %}{{ customer.part}}{% endif %}"
+          aria-required="true"
+          required
+        >
+      </div>
+      <div class="col-span-2 is-required">
+        <input
+          type="text"
+          class="input w-full"
+          id="{{ form_id }}-partnumber"
+          name="contact[{{ 'contact.form.partnumber' | t }}]"
+          pattern="[0-9\-]*"
+          placeholder="Part Number"
+          autocomplete="partnumber"
+          value="{% if form.partnumber %}{{ form.partnumber }}{% elsif customer %}{{ customer.partnumber}}{% endif %}"
+          aria-required="true"
+          required
+        >
+      </div>
+      <div class="col-span-2 is-required">
+        <input
+          type="text"
+          class="input w-full"
+          id="{{ form_id }}-name"
+          placeholder="Your Name"
+          name="contact[{{ 'contact.form.name' | t }}]"
+          autocomplete="name"
+          value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+          aria-required="true"
+          required
+        >
+      </div>
+      <div class="col-span-2 is-required">
+        <input
+          type="email"
+          class="input w-full"
+          id="{{ form_id }}-email"
+          placeholder="Your Email"
+          name="contact[email]"
+          autocomplete="email"
+          value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+          {%- if form.errors contains 'email' %}
+            aria-invalid="true"
+            aria-describedby="{{ form_id }}-email-error"
+          {%- endif %}
+          aria-required="true"
+          required
+        >
+      </div>
+
+      <div class="col-span-2 is-required flexv2">
+        <input
+          type="checkbox"
+          name="contact[email-subscribe]"
+          value="Email me monthly inventory updates and special offers."
+          aria-required="true"
+          required
+
+        ><label class="support_check" for="Email me monthly inventory updates and special offers."
+          >Email me monthly inventory updates and special offers.</label
+        >
+      </div>
+
+      {%- if form.errors contains block.type -%}
+        <p class="form__field-error" id="{{ form_id }}-{{ block.type }}-error">
+          {{ form.errors.translated_fields[block.type] | capitalize }}
+          {{ form.errors.messages[block.type] }}
+        </p>
+      {%- endif -%}
+    </div>
+
+    {%- if form.posted_successfully? -%}
+      <div
+        class="alert mt-8 bg-success-bg text-success-text"
+        tabindex="-1"
+        autofocus
+        {% if settings.animations_enabled != 'disabled' %}
+          data-cc-animate
+        {% endif %}
+      >
+        {{ 'contact.form.post_success' | t }}
+      </div>
+    {%- elsif form.errors -%}
+      <div
+        class="alert mt-8 bg-error-bg text-error-text"
+        tabindex="-1"
+        autofocus
+        {% if settings.animations_enabled != 'disabled' %}
+          data-cc-animate
+        {% endif %}
+      >
+        <h2 class="h5 text-current">{{ 'contact.form.error_heading' | t }}</h2>
+        <ul class="styled-list">
+          <li>
+            <a class="link text-current" href="#{{ form_id }}-email">
+              {{- form.errors.translated_fields.email | capitalize }}
+              {{ form.errors.messages.email -}}
+            </a>
+          </li>
+        </ul>
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div
+        class="mt-6"
+        {% if settings.animations_enabled != 'disabled' %}
+          data-cc-animate
+        {% endif %}
+      >
+        <button class="{{ section.settings.button_style }} menu_btn w-full md:w-auto">CHECK THE RACK</button>
+      </div>
+    {%- endif -%}
+  {%- endform -%}
+</div>
