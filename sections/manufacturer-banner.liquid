@@ -52,14 +52,7 @@
           <div style="padding-top: 34.78260869565217%;">
         {% endif %}
 
-        {% render 'image',
-           image: section.settings.manufacturer_img | img_url :'master',
-          widths: '700, 800, 960, 1296',
-          src_width: 1296,
-          sizes: sizes,
-          lazy_load: false,
-          class: class
-        %}
+        {% render 'image', image: section.settings.manufacturer_img, img_url: 'master', widths: '700, 800, 960, 1296', src_width: 1296, sizes: sizes, lazy_load: false, class: class %}
 
         {% if fixed_image_ratio %}
           </div>
@@ -253,3 +246,23 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'image',
+               image: section.settings.manufacturer_img | img_url :'master',
+              widths: '700, 800, 960, 1296',
+              src_width: 1296,
+              sizes: sizes,
+              lazy_load: false,
+              class: class
+            %}
+  to: "{% render 'image', image: section.settings.manufacturer_img, img_url: 'master',
+    widths: '700, 800, 960, 1296', src_width: 1296, sizes: sizes, lazy_load: false,
+    class: class %}"
+  position: 2358..2533
+{% endcomment %}
